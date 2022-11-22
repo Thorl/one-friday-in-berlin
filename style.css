@@ -1,0 +1,48 @@
+html {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-size: 62.5%;
+}
+
+body {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100vw;
+}
+
+#game-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50rem;
+  height: 50rem;
+
+  border: 1px solid black;
+}
+
+#game-info__title {
+  font-size: 3rem;
+}
+
+#game-info p {
+  width: 50%;
+
+  font-size: 2rem;
+}
+
+#canvas {
+  border: 1px solid black;
+}
+
+#start-level-btn {
+  display: none;
+}
+
+@media (max-width: 1000px) {
+  body {
+    flex-direction: column;
+  }
+}
