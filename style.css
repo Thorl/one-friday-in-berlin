@@ -1,4 +1,4 @@
-html {
+/* html {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -45,4 +45,14 @@ body {
   body {
     flex-direction: column;
   }
+}
+ */
+
+html {
+  margin: 0;
+  padding: 0;
+}
+
+canvas {
+  border: 1px solid black;
 }
