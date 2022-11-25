@@ -5,10 +5,11 @@ class Game {
     this.ctx = canvas.getContext("2d");
     this.width = canvas.width;
     this.height = canvas.height;
-    this.wasInfoLoaded = false;
+    this.shouldStartLevel = false;
     this.levelToLoad = 1;
     this.levelToStart = 1;
     this.abortController = new AbortController();
+    this.frames = 0;
   }
 
   drawButton(text) {
@@ -35,7 +36,7 @@ class Game {
           event.offsetY
         );
 
-        if (isMouseOnBtn && !this.wasInfoLoaded) {
+        if (isMouseOnBtn && !this.shouldStartLevel) {
           this.loadLevel(this.levelToLoad);
           if (this.levelToLoad < 2) {
             this.levelToLoad++;
@@ -44,7 +45,7 @@ class Game {
           }
         }
 
-        if (isMouseOnBtn && this.wasInfoLoaded) {
+        if (isMouseOnBtn && this.shouldStartLevel) {
           this.startLevel(this.levelToStart);
           if (this.levelToStart < 2) {
             this.levelToStart++;
@@ -120,6 +121,7 @@ class StartScreen extends Game {
 class LevelOne extends Game {
   constructor() {
     super();
+    this.didLevelStart = false;
   }
 
   loadInfoScreen() {
@@ -132,7 +134,7 @@ class LevelOne extends Game {
     const p1 = "you decide to not find the nearest crosswalk.";
     const p2 = "Instead, you opt for crossing the 4-lane road.";
     const p3 =
-      "Get to the other side of the road without getting hit by a bus.";
+      "Get to the other side of the road as quickly as possible without getting hit by a bus.";
     const p4 =
       "Control your character by using the up, down, left, and right keyboard buttons.";
     const p5 = "Begin playing by clicking the 'Start Level' button.";
@@ -149,7 +151,7 @@ class LevelOne extends Game {
     this.ctx.fillText(p5, 50, 400, 600);
 
     this.drawButton("Start Level");
-    this.wasInfoLoaded = true;
+    this.shouldStartLevel = true;
   }
 
   drawBackground() {
@@ -159,9 +161,113 @@ class LevelOne extends Game {
     this.ctx.drawImage(img, 0, 0, this.width, this.height);
   }
 
+  updateVehiclePos() {
+    this.frames += 1;
+    const startingXPos = game.width;
+    const rowFourStartingYPos = 400;
+    const rowThreeStartingYPos = 290;
+    const rowTwoStartingYPos = 180;
+    const rowOneStartingYpos = 65;
+
+    if (this.frames % 300 === 0) {
+      vehicles.push(new Vehicle(startingXPos, rowOneStartingYpos, 150, 75, 1));
+    }
+
+    if (this.frames % 200 === 0) {
+      vehicles.push(new Vehicle(startingXPos, rowTwoStartingYPos, 150, 75, 2));
+
+      vehicles.push(
+        new Vehicle(startingXPos, rowThreeStartingYPos, 150, 75, 3)
+      );
+
+      vehicles.push(new Vehicle(startingXPos, rowFourStartingYPos, 150, 75, 6));
+    }
+
+    for (let i = 0; i < vehicles.length; i++) {
+      vehicles[i].xPos -= vehicles[i].speed;
+      vehicles[i].drawVehicle();
+    }
+  }
+
+  didPlayerCollide(vehicle) {
+    return !(
+      playerLevelOne.top() > vehicle.bottom() ||
+      playerLevelOne.bottom() < vehicle.top() ||
+      playerLevelOne.left() > vehicle.right() ||
+      (playerLevelOne.left() < vehicle.left() &&
+        playerLevelOne.right() < vehicle.left()) ||
+      playerLevelOne.right() < vehicle.left()
+    );
+  }
+
   startLevel() {
     this.removeEventListener();
-    this.intervalId = setInterval(drawLevelOne, 50);
+    this.areControlsDisabled = true;
+    this.intervalId = setInterval(drawLevelOne, 10);
+  }
+
+  stopLevel() {
+    clearInterval(this.intervalId);
+    // this.loadGameOverScreen();
+  }
+
+  countdown() {
+    let count = 5 - Math.floor(this.frames / 100);
+
+    if (count < -2) return;
+
+    this.ctx.font = "50px roboto";
+    this.ctx.fillStyle = "black";
+    if (count === 0 && !this.didLevelStart) {
+      this.didLevelStart = true;
+      this.ctx.fillText("GO!", 350, 250);
+      document.addEventListener("keydown", (event) => {
+        switch (event.keyCode) {
+          case 38:
+            playerLevelOne.moveUp();
+            break;
+          case 40:
+            playerLevelOne.moveDown();
+            break;
+          case 37:
+            playerLevelOne.moveLeft();
+            break;
+          case 39:
+            playerLevelOne.moveRight();
+            break;
+        }
+      });
+    } else if (count == 0 && this.didLevelStart) {
+      this.ctx.fillText("GO!", 350, 250);
+    } else if (count > 0) {
+      this.ctx.fillText(`${count}`, 350, 250);
+    }
+  }
+
+  loadGameOverScreen() {
+    this.clearGameArea();
+
+    this.shouldStartLevel = false;
+    this.levelToLoad = 0;
+
+    this.ctx.fillStyle = "black";
+    this.ctx.fillRect(0, 0, this.width, this.height);
+
+    const header = "Game Over...";
+    const p1 = "you were hit by a bus.";
+    const p2 = "You'll need some time to recover at the hospital.";
+    const p3 = "But don't worry. Next weekend you can always...";
+
+    this.ctx.font = "50px roboto";
+    this.ctx.fillStyle = "red";
+    this.ctx.fillText(header, 50, 100);
+
+    this.ctx.font = "25px roboto";
+    this.ctx.fillText(p1, 50, 200, 600);
+    this.ctx.fillText(p2, 50, 250, 600);
+    this.ctx.fillText(p3, 50, 300, 600);
+
+    this.drawButton("Try Again");
   }
 }
 
@@ -174,11 +280,11 @@ class GameObject {
   }
 
   top() {
-    return this.yPos + this.height;
+    return this.yPos;
   }
 
   bottom() {
-    return this.yPos;
+    return this.yPos + this.height;
   }
 
   left() {
@@ -186,11 +292,11 @@ class GameObject {
   }
 
   right() {
-    this.xPos + this.width;
+    return this.xPos + this.width;
   }
 }
 
-class PlayerTopView extends GameObject {
+class Player extends GameObject {
   constructor(xPos, yPos, width, height) {
     super(xPos, yPos, width, height);
   }
@@ -232,33 +338,45 @@ class PlayerTopView extends GameObject {
   }
 }
 
-const startScreen = new StartScreen();
-const levelOne = new LevelOne();
-const playerTopView = new PlayerTopView(300, 480, 50, 70);
+const vehicles = [];
 
-function drawLevelOne() {
-  game.clearGameArea();
-  levelOne.drawBackground();
-  playerTopView.updatePosition();
+class Vehicle extends GameObject {
+  constructor(xPos, yPos, width, height, speed) {
+    super(xPos, yPos, width, height);
+    this.speed = speed;
+  }
+
+  drawVehicle() {
+    const ctx = game.ctx;
+    const vehicleImg = new Image();
+    vehicleImg.src = "./images/bus-top-down-v3.png";
+
+    ctx.drawImage(vehicleImg, this.xPos, this.yPos, this.width, this.height);
+  }
 }
 
-window.onload = () => {
-  game.loadLevel(0);
+const startScreen = new StartScreen();
+const levelOne = new LevelOne();
+const playerLevelOne = new Player(300, 485, 40, 60);
+
+const checkPlayerCollision = (vehicleArray) => {
+  const collided = vehicleArray.some((vehicle) => {
+    return levelOne.didPlayerCollide(vehicle);
+  });
+  if (collided) {
+    levelOne.stopLevel();
+  }
 };
 
-document.addEventListener("keydown", (event) => {
-  switch (event.keyCode) {
-    case 38:
-      playerTopView.moveUp();
-      break;
-    case 40:
-      playerTopView.moveDown();
-      break;
-    case 37:
-      playerTopView.moveLeft();
-      break;
-    case 39:
-      playerTopView.moveRight();
-      break;
-  }
-});
+const drawLevelOne = () => {
+  game.clearGameArea();
+  levelOne.drawBackground();
+  playerLevelOne.updatePosition();
+  levelOne.updateVehiclePos();
+  checkPlayerCollision(vehicles);
+  levelOne.countdown();
+};
+
+window.onload = () => {
+  game.loadLevel(1);
+};
