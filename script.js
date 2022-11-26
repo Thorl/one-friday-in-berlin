@@ -10,115 +10,25 @@ class Game {
       levelToStart: 1,
       shouldStartLevel: false,
     };
-    this.abortController = new AbortController();
-    this.frames = 0;
-  }
-
-  drawButton(text) {
-    const rectangle = new Path2D();
-    const rectangleX = 250;
-    const rectangleY = 450;
-    const rectangleWidth = 200;
-    const rectangleHeight = 50;
-    rectangle.rect(rectangleX, rectangleY, rectangleWidth, rectangleHeight);
-    this.ctx.fillStyle = "red";
-    this.ctx.fill(rectangle);
-
-    const button = rectangle;
-    const buttonDimensions = {
-      rectangleX,
-      rectangleY,
-      rectangleWidth,
-      rectangleHeight,
+    this.playerConfig = {
+      xPos: 300,
+      yPos: 485,
+      width: 40,
+      height: 60,
     };
-
-    this.ctx.fillStyle = "white";
-    this.ctx.fillText(text, 290, 483);
-
-    console.log("Adding event listener");
-
-    this.setUpEventListener(button, buttonDimensions);
+    this.didLevelOneStart = false;
+    this.frames = 0;
+    this.levelOneController;
   }
 
-  setUpEventListener(button, buttonDimensions) {
-    this.canvas.addEventListener(
-      "click",
-      (event) => {
-        button.rect(
-          buttonDimensions.rectangleX,
-          buttonDimensions.rectangleY,
-          buttonDimensions.rectangleWidth,
-          buttonDimensions.rectangleHeight
-        );
+  /* Start Screen */
 
-        const isMouseOnBtn = this.ctx.isPointInPath(
-          button,
-          event.offsetX,
-          event.offsetY
-        );
-
-        if (isMouseOnBtn && !this.gameState.shouldStartLevel) {
-          this.loadLevel(this.gameState.levelToLoad);
-        }
-
-        if (isMouseOnBtn && this.gameState.shouldStartLevel) {
-          this.startLevel(this.gameState.levelToStart);
-        }
-      },
-      { once: true }
-    );
-  }
-
-  removeEventListener() {
-    console.log("Removing event listener");
-    this.abortController.abort();
-  }
-
-  clearGameArea() {
-    this.ctx.clearRect(0, 0, this.width, this.height);
-  }
-
-  loadLevel(levelToLoad) {
-    switch (levelToLoad) {
-      case 0:
-        startScreen.loadInfoScreen();
-        break;
-      case 1:
-        levelOne.loadInfoScreen();
-        break;
-    }
-  }
-
-  startLevel(levelToStart) {
-    console.log("Starting level ", levelToStart);
-    switch (levelToStart) {
-      case 1:
-        levelOne.startLevelOne();
-        break;
-    }
-  }
-}
-
-const game = new Game();
-
-class StartScreen extends Game {
-  constructor() {
-    super();
-  }
-
-  loadInfoScreen() {
+  loadStartScreen() {
     this.clearGameArea();
     this.ctx.fillRect(0, 0, this.width, this.height);
 
-    game.gameState.levelToLoad = 1;
-    game.gameState.shouldStartLevel = false;
-
-    console.log(
-      "Updated game state at Start Screen load info screen. Current Start Screen game state: ",
-      this.gameState,
-      "Current Main Game state: ",
-      game.gameState
-    );
+    this.gameState.levelToLoad = 1;
+    this.gameState.shouldStartLevel = false;
 
     const header = "One Friday in Berlin...";
     const p1 = "you have made plans with your friends to go to a bar.";
@@ -138,25 +48,17 @@ class StartScreen extends Game {
 
     this.drawButton("Start Game");
   }
-}
 
-class LevelOne extends Game {
-  constructor() {
-    super();
-  }
+  /*  */
 
-  loadInfoScreen() {
+  /* Level One */
+
+  loadLevelOne() {
     this.clearGameArea();
 
     this.gameState.levelToStart = 1;
-    this.gameState.shouldStartLevel = true;
 
-    console.log(
-      "Updated game state at Level One load info screen. Current Level One game state: ",
-      this.gameState,
-      "Current Main Game state: ",
-      game.gameState
-    );
+    console.log("Loading Level One Screen. Game state: ", this.gameState);
 
     this.ctx.fillStyle = "black";
     this.ctx.fillRect(0, 0, this.width, this.height);
@@ -182,24 +84,18 @@ class LevelOne extends Game {
     this.ctx.fillText(p5, 50, 400, 600);
 
     this.drawButton("Start Level");
+    this.gameState.shouldStartLevel = true;
   }
 
-  startLevelOne() {
-    this.removeEventListener();
-    this.intervalId = setInterval(drawLevelOne, 10);
-  }
-
-  loadGameOverScreen() {
+  loadLevelOneGameOverScreen() {
+    this.resetLevelOne();
     this.clearGameArea();
+    this.removeLevelOneKeyEventListener();
 
     this.gameState.levelToLoad = 0;
     this.gameState.shouldStartLevel = false;
-    console.log(
-      "Updated game state at Game Over screen. Current Game Over screen game state: ",
-      this.gameState,
-      "Current Main Game state: ",
-      game.gameState
-    );
+
+    console.log("Loading Game Over Screen. Game state: ", this.gameState);
 
     this.ctx.fillStyle = "black";
     this.ctx.fillRect(0, 0, this.width, this.height);
@@ -221,14 +117,23 @@ class LevelOne extends Game {
     this.drawButton("Try Again");
   }
 
-  drawBackground() {
+  startLevelOne() {
+    this.intervalId = setInterval(drawLevelOne, 10);
+  }
+
+  stopLevelOne() {
+    clearInterval(this.intervalId);
+    this.loadLevelOneGameOverScreen();
+  }
+
+  drawLevelOneBackground() {
     const img = new Image();
     img.src = "./images/4-lane-road.jpg";
 
     this.ctx.drawImage(img, 0, 0, this.width, this.height);
   }
 
-  updateVehiclePos() {
+  updateLevelOneVehiclePos() {
     this.frames += 1;
     const startingXPos = game.width;
     const rowFourStartingYPos = 400;
@@ -256,7 +161,7 @@ class LevelOne extends Game {
     }
   }
 
-  didPlayerCollide(vehicle) {
+  levelOneCollisionCheck(vehicle) {
     return !(
       playerLevelOne.top() > vehicle.bottom() ||
       playerLevelOne.bottom() < vehicle.top() ||
@@ -267,44 +172,146 @@ class LevelOne extends Game {
     );
   }
 
-  stopLevel() {
-    clearInterval(this.intervalId);
-    this.loadGameOverScreen();
-  }
-
-  countdownToStartLevel() {
+  countdownToStartLevelOne() {
     let count = 5 - Math.floor(this.frames / 100);
 
     if (count < -2) return;
 
     this.ctx.font = "50px roboto";
     this.ctx.fillStyle = "black";
-    if (count === 0 && !this.didLevelStart) {
-      this.didLevelStart = true;
+    if (count === 0 && !this.didLevelOneStart) {
+      this.didLevelOneStart = true;
+      this.levelOneController = new AbortController();
+      const signal = this.levelOneController.signal;
+
       this.ctx.fillText("GO!", 320, 240);
-      document.addEventListener("keydown", (event) => {
-        switch (event.keyCode) {
-          case 38:
-            playerLevelOne.moveUp();
-            break;
-          case 40:
-            playerLevelOne.moveDown();
-            break;
-          case 37:
-            playerLevelOne.moveLeft();
-            break;
-          case 39:
-            playerLevelOne.moveRight();
-            break;
-        }
-      });
-    } else if (count == 0 && this.didLevelStart) {
+
+      document.addEventListener(
+        "keydown",
+        (event) => {
+          switch (event.keyCode) {
+            case 38:
+              playerLevelOne.moveUp();
+              break;
+            case 40:
+              playerLevelOne.moveDown();
+              break;
+            case 37:
+              playerLevelOne.moveLeft();
+              break;
+            case 39:
+              playerLevelOne.moveRight();
+              break;
+          }
+        },
+        { signal: signal }
+      );
+    } else if (count == 0 && this.didLevelOneStart) {
       this.ctx.fillText("GO!", 320, 240);
     } else if (count > 0) {
       this.ctx.fillText(`${count}`, 320, 240);
     }
   }
+
+  removeLevelOneKeyEventListener() {
+    console.log("Removing event listener");
+    this.levelOneController.abort();
+  }
+
+  resetLevelOne() {
+    playerLevelOne = new Player(300, 485, 40, 60);
+
+    vehicles = [];
+
+    this.frames = 0;
+
+    this.didLevelOneStart = false;
+
+    this.levelOneAbortController = new AbortController();
+  }
+
+  /*  */
+
+  /* Utilities */
+
+  drawButton(text) {
+    const rectangle = new Path2D();
+    const rectangleX = 250;
+    const rectangleY = 450;
+    const rectangleWidth = 200;
+    const rectangleHeight = 50;
+    rectangle.rect(rectangleX, rectangleY, rectangleWidth, rectangleHeight);
+    this.ctx.fillStyle = "red";
+    this.ctx.fill(rectangle);
+
+    const button = rectangle;
+    const buttonDimensions = {
+      rectangleX,
+      rectangleY,
+      rectangleWidth,
+      rectangleHeight,
+    };
+
+    this.ctx.fillStyle = "white";
+    this.ctx.fillText(text, 290, 483);
+
+    this.setUpEventListener(button, buttonDimensions);
+  }
+
+  setUpEventListener(button, buttonDimensions) {
+    this.canvas.addEventListener(
+      "click",
+      (event) => {
+        button.rect(
+          buttonDimensions.rectangleX,
+          buttonDimensions.rectangleY,
+          buttonDimensions.rectangleWidth,
+          buttonDimensions.rectangleHeight
+        );
+
+        const isMouseOnBtn = this.ctx.isPointInPath(
+          button,
+          event.offsetX,
+          event.offsetY
+        );
+
+        if (isMouseOnBtn && !this.gameState.shouldStartLevel) {
+          this.loadLevel(this.gameState.levelToLoad);
+        } else if (isMouseOnBtn && this.gameState.shouldStartLevel) {
+          this.startLevel(this.gameState.levelToStart);
+        }
+      },
+      { once: true }
+    );
+  }
+
+  clearGameArea() {
+    this.ctx.clearRect(0, 0, this.width, this.height);
+  }
+
+  loadLevel(levelToLoad) {
+    console.log("Loading level: ", levelToLoad);
+    switch (levelToLoad) {
+      case 0:
+        this.loadStartScreen();
+        break;
+      case 1:
+        this.loadLevelOne();
+        break;
+    }
+  }
+
+  startLevel(levelToStart) {
+    console.log("Starting level ", levelToStart);
+    switch (levelToStart) {
+      case 1:
+        this.startLevelOne();
+        break;
+    }
+  }
 }
+
+const game = new Game();
 
 class GameObject {
   constructor(xPos, yPos, width, height) {
@@ -373,7 +380,7 @@ class Player extends GameObject {
   }
 }
 
-const vehicles = [];
+let vehicles = [];
 
 class Vehicle extends GameObject {
   constructor(xPos, yPos, width, height, speed) {
@@ -390,28 +397,26 @@ class Vehicle extends GameObject {
   }
 }
 
-const startScreen = new StartScreen();
-const levelOne = new LevelOne();
-const playerLevelOne = new Player(300, 485, 40, 60);
+let playerLevelOne = new Player(300, 485, 40, 60);
 
 const checkPlayerCollision = (vehicleArray) => {
   const collided = vehicleArray.some((vehicle) => {
-    return levelOne.didPlayerCollide(vehicle);
+    return game.levelOneCollisionCheck(vehicle);
   });
   if (collided) {
-    levelOne.stopLevel();
+    game.stopLevelOne();
   }
 };
 
 const drawLevelOne = () => {
   game.clearGameArea();
-  levelOne.drawBackground();
+  game.drawLevelOneBackground();
   playerLevelOne.updatePosition();
-  levelOne.updateVehiclePos();
+  game.updateLevelOneVehiclePos();
   checkPlayerCollision(vehicles);
-  levelOne.countdownToStartLevel();
+  game.countdownToStartLevelOne();
 };
 
 window.onload = () => {
-  game.loadLevel(0);
+  game.loadStartScreen(0);
 };
