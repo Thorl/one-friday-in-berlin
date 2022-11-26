@@ -5,9 +5,11 @@ class Game {
     this.ctx = canvas.getContext("2d");
     this.width = canvas.width;
     this.height = canvas.height;
-    this.shouldStartLevel = false;
-    this.levelToLoad = 1;
-    this.levelToStart = 1;
+    this.gameState = {
+      levelToLoad: 1,
+      levelToStart: 1,
+      shouldStartLevel: false,
+    };
     this.abortController = new AbortController();
     this.frames = 0;
   }
@@ -22,43 +24,53 @@ class Game {
     this.ctx.fillStyle = "red";
     this.ctx.fill(rectangle);
 
+    const button = rectangle;
+    const buttonDimensions = {
+      rectangleX,
+      rectangleY,
+      rectangleWidth,
+      rectangleHeight,
+    };
+
     this.ctx.fillStyle = "white";
     this.ctx.fillText(text, 290, 483);
 
-    this.ctx.canvas.addEventListener(
+    console.log("Adding event listener");
+
+    this.setUpEventListener(button, buttonDimensions);
+  }
+
+  setUpEventListener(button, buttonDimensions) {
+    this.canvas.addEventListener(
       "click",
       (event) => {
-        rectangle.rect(rectangleX, rectangleY, rectangleWidth, rectangleHeight);
+        button.rect(
+          buttonDimensions.rectangleX,
+          buttonDimensions.rectangleY,
+          buttonDimensions.rectangleWidth,
+          buttonDimensions.rectangleHeight
+        );
 
         const isMouseOnBtn = this.ctx.isPointInPath(
-          rectangle,
+          button,
           event.offsetX,
           event.offsetY
         );
 
-        if (isMouseOnBtn && !this.shouldStartLevel) {
-          this.loadLevel(this.levelToLoad);
-          if (this.levelToLoad < 2) {
-            this.levelToLoad++;
-          } else {
-            this.levelToLoad = 0;
-          }
+        if (isMouseOnBtn && !this.gameState.shouldStartLevel) {
+          this.loadLevel(this.gameState.levelToLoad);
         }
 
-        if (isMouseOnBtn && this.shouldStartLevel) {
-          this.startLevel(this.levelToStart);
-          if (this.levelToStart < 2) {
-            this.levelToStart++;
-          } else {
-            this.levelToStart = 1;
-          }
+        if (isMouseOnBtn && this.gameState.shouldStartLevel) {
+          this.startLevel(this.gameState.levelToStart);
         }
       },
-      { signal: this.abortController.signal }
+      { once: true }
     );
   }
 
   removeEventListener() {
+    console.log("Removing event listener");
     this.abortController.abort();
   }
 
@@ -72,16 +84,16 @@ class Game {
         startScreen.loadInfoScreen();
         break;
       case 1:
-        this.removeEventListener();
         levelOne.loadInfoScreen();
         break;
     }
   }
 
   startLevel(levelToStart) {
+    console.log("Starting level ", levelToStart);
     switch (levelToStart) {
       case 1:
-        levelOne.startLevel();
+        levelOne.startLevelOne();
         break;
     }
   }
@@ -97,6 +109,16 @@ class StartScreen extends Game {
   loadInfoScreen() {
     this.clearGameArea();
     this.ctx.fillRect(0, 0, this.width, this.height);
+
+    game.gameState.levelToLoad = 1;
+    game.gameState.shouldStartLevel = false;
+
+    console.log(
+      "Updated game state at Start Screen load info screen. Current Start Screen game state: ",
+      this.gameState,
+      "Current Main Game state: ",
+      game.gameState
+    );
 
     const header = "One Friday in Berlin...";
     const p1 = "you have made plans with your friends to go to a bar.";
@@ -121,11 +143,20 @@ class StartScreen extends Game {
 class LevelOne extends Game {
   constructor() {
     super();
-    this.didLevelStart = false;
   }
 
   loadInfoScreen() {
     this.clearGameArea();
+
+    this.gameState.levelToStart = 1;
+    this.gameState.shouldStartLevel = true;
+
+    console.log(
+      "Updated game state at Level One load info screen. Current Level One game state: ",
+      this.gameState,
+      "Current Main Game state: ",
+      game.gameState
+    );
 
     this.ctx.fillStyle = "black";
     this.ctx.fillRect(0, 0, this.width, this.height);
@@ -151,7 +182,43 @@ class LevelOne extends Game {
     this.ctx.fillText(p5, 50, 400, 600);
 
     this.drawButton("Start Level");
-    this.shouldStartLevel = true;
+  }
+
+  startLevelOne() {
+    this.removeEventListener();
+    this.intervalId = setInterval(drawLevelOne, 10);
+  }
+
+  loadGameOverScreen() {
+    this.clearGameArea();
+
+    this.gameState.levelToLoad = 0;
+    this.gameState.shouldStartLevel = false;
+    console.log(
+      "Updated game state at Game Over screen. Current Game Over screen game state: ",
+      this.gameState,
+      "Current Main Game state: ",
+      game.gameState
+    );
+
+    this.ctx.fillStyle = "black";
+    this.ctx.fillRect(0, 0, this.width, this.height);
+
+    const header = "Game Over...";
+    const p1 = "you were hit by a bus.";
+    const p2 = "You'll need some time to recover at the hospital.";
+    const p3 = "But don't worry. Next weekend you can always...";
+
+    this.ctx.font = "50px roboto";
+    this.ctx.fillStyle = "red";
+    this.ctx.fillText(header, 50, 100);
+
+    this.ctx.font = "25px roboto";
+    this.ctx.fillText(p1, 50, 200, 600);
+    this.ctx.fillText(p2, 50, 250, 600);
+    this.ctx.fillText(p3, 50, 300, 600);
+
+    this.drawButton("Try Again");
   }
 
   drawBackground() {
@@ -200,18 +267,12 @@ class LevelOne extends Game {
     );
   }
 
-  startLevel() {
-    this.removeEventListener();
-    this.areControlsDisabled = true;
-    this.intervalId = setInterval(drawLevelOne, 10);
-  }
-
   stopLevel() {
     clearInterval(this.intervalId);
-    // this.loadGameOverScreen();
+    this.loadGameOverScreen();
   }
 
-  countdown() {
+  countdownToStartLevel() {
     let count = 5 - Math.floor(this.frames / 100);
 
     if (count < -2) return;
@@ -220,7 +281,7 @@ class LevelOne extends Game {
     this.ctx.fillStyle = "black";
     if (count === 0 && !this.didLevelStart) {
       this.didLevelStart = true;
-      this.ctx.fillText("GO!", 350, 250);
+      this.ctx.fillText("GO!", 320, 240);
       document.addEventListener("keydown", (event) => {
         switch (event.keyCode) {
           case 38:
@@ -238,36 +299,10 @@ class LevelOne extends Game {
         }
       });
     } else if (count == 0 && this.didLevelStart) {
-      this.ctx.fillText("GO!", 350, 250);
+      this.ctx.fillText("GO!", 320, 240);
     } else if (count > 0) {
-      this.ctx.fillText(`${count}`, 350, 250);
+      this.ctx.fillText(`${count}`, 320, 240);
     }
-  }
-
-  loadGameOverScreen() {
-    this.clearGameArea();
-
-    this.shouldStartLevel = false;
-    this.levelToLoad = 0;
-
-    this.ctx.fillStyle = "black";
-    this.ctx.fillRect(0, 0, this.width, this.height);
-
-    const header = "Game Over...";
-    const p1 = "you were hit by a bus.";
-    const p2 = "You'll need some time to recover at the hospital.";
-    const p3 = "But don't worry. Next weekend you can always...";
-
-    this.ctx.font = "50px roboto";
-    this.ctx.fillStyle = "red";
-    this.ctx.fillText(header, 50, 100);
-
-    this.ctx.font = "25px roboto";
-    this.ctx.fillText(p1, 50, 200, 600);
-    this.ctx.fillText(p2, 50, 250, 600);
-    this.ctx.fillText(p3, 50, 300, 600);
-
-    this.drawButton("Try Again");
   }
 }
 
@@ -374,9 +409,9 @@ const drawLevelOne = () => {
   playerLevelOne.updatePosition();
   levelOne.updateVehiclePos();
   checkPlayerCollision(vehicles);
-  levelOne.countdown();
+  levelOne.countdownToStartLevel();
 };
 
 window.onload = () => {
-  game.loadLevel(1);
+  game.loadLevel(0);
 };
