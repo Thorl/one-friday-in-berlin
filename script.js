@@ -10,12 +10,6 @@ class Game {
       levelToStart: 1,
       shouldStartLevel: false,
     };
-    this.playerConfig = {
-      xPos: 300,
-      yPos: 485,
-      width: 40,
-      height: 60,
-    };
     this.didLevelOneStart = false;
     this.frames = 0;
     this.levelOneController;
@@ -103,7 +97,7 @@ class Game {
     const header = "Game Over...";
     const p1 = "you were hit by a bus.";
     const p2 = "You'll need some time to recover at the hospital.";
-    const p3 = "But don't worry. Next weekend you can always...";
+    const p3 = "But don't worry. Another weekend you can always...";
 
     this.ctx.font = "50px roboto";
     this.ctx.fillStyle = "red";
@@ -115,6 +109,31 @@ class Game {
     this.ctx.fillText(p3, 50, 300, 600);
 
     this.drawButton("Try Again");
+  }
+
+  loadLevelOneVictoryScreen() {
+    this.clearGameArea();
+    this.removeLevelOneKeyEventListener();
+
+    this.gameState.levelToLoad = 2;
+    this.gameState.shouldStartLevel = false;
+
+    this.ctx.fillStyle = "black";
+    this.ctx.fillRect(0, 0, this.width, this.height);
+
+    const header = "Success!";
+    const p1 = "You made it safely to the other side.";
+    const p2 = "Time to have some beer with your friends.";
+
+    this.ctx.font = "50px roboto";
+    this.ctx.fillStyle = "green";
+    this.ctx.fillText(header, 50, 100);
+
+    this.ctx.font = "25px roboto";
+    this.ctx.fillText(p1, 50, 200, 600);
+    this.ctx.fillText(p2, 50, 250, 600);
+
+    this.drawButton("Enter Bar");
   }
 
   startLevelOne() {
@@ -170,6 +189,13 @@ class Game {
         playerLevelOne.right() < vehicle.left()) ||
       playerLevelOne.right() < vehicle.left()
     );
+  }
+
+  levelOneVictoryCheck(playerYPos) {
+    if (playerYPos < 30) {
+      this.stopLevelOne();
+      this.loadLevelOneVictoryScreen();
+    }
   }
 
   countdownToStartLevelOne() {
@@ -228,6 +254,40 @@ class Game {
     this.didLevelOneStart = false;
 
     this.levelOneAbortController = new AbortController();
+  }
+
+  /* Level Two */
+
+  loadLevelTwo() {
+    this.clearGameArea();
+
+    this.gameState.levelToStart = 2;
+
+    this.ctx.fillStyle = "black";
+    this.ctx.fillRect(0, 0, this.width, this.height);
+
+    const header = "Inside the bar...";
+    const p1 = "you're very thirsty and begin ordering beer.";
+    const p2 = "You tell the bartender to just keep them coming.";
+    const p3 =
+      "Drink as much beer as you can by collecting the falling bottles.";
+    const p4 =
+      "Control your character by using the left and right keyboard buttons.";
+    const p5 = "Begin playing by clicking the 'Start Level' button.";
+
+    this.ctx.font = "50px roboto";
+    this.ctx.fillStyle = "#fff";
+    this.ctx.fillText(header, 50, 100);
+
+    this.ctx.font = "25px roboto";
+    this.ctx.fillText(p1, 50, 200, 600);
+    this.ctx.fillText(p2, 50, 250, 600);
+    this.ctx.fillText(p3, 50, 300, 600);
+    this.ctx.fillText(p4, 50, 350, 600);
+    this.ctx.fillText(p5, 50, 400, 600);
+
+    this.drawButton("Start Level");
+    this.gameState.shouldStartLevel = true;
   }
 
   /*  */
@@ -298,11 +358,13 @@ class Game {
       case 1:
         this.loadLevelOne();
         break;
+      case 2:
+        this.loadLevelTwo();
+        break;
     }
   }
 
   startLevel(levelToStart) {
-    console.log("Starting level ", levelToStart);
     switch (levelToStart) {
       case 1:
         this.startLevelOne();
@@ -414,6 +476,7 @@ const drawLevelOne = () => {
   playerLevelOne.updatePosition();
   game.updateLevelOneVehiclePos();
   checkPlayerCollision(vehicles);
+  game.levelOneVictoryCheck(playerLevelOne.yPos);
   game.countdownToStartLevelOne();
 };
 
