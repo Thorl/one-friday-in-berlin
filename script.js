@@ -14,16 +14,43 @@ class Game {
     this.frames = 0;
     this.abortController;
     this.levelTwoScore = 0;
+    this.loadedImageCount = 0;
+    this.imageNames = [
+      "startScreen",
+      "levelOne",
+      "levelOneInGame",
+      "levelOneGameOver",
+      "levelOneVictory",
+      "levelTwo",
+      "levelTwoInGame",
+      "levelTwoGameOver",
+    ];
+    this.imageSrcs = [
+      "./images/start-screen.jpg",
+      "./images/level-one.jpeg",
+      "./images/level-one-in-game.jpg",
+      "./images/level-one-game-over.jpg",
+      "./images/level-one-victory.jpeg",
+      "./images/level-two.jpeg",
+      "./images/level-two-in-game.jpg",
+      "./images/level-two-game-over.jpeg",
+    ];
+    this.loadedImages = [];
+    this.images = {};
   }
 
   /* Start Screen */
 
   loadStartScreen() {
     this.clearGameArea();
-    this.ctx.fillRect(0, 0, this.width, this.height);
-
+    clearTimeout(this.timeoutId);
     this.gameState.levelToLoad = 1;
     this.gameState.shouldStartLevel = false;
+
+    this.ctx.drawImage(this.images.startScreen, 0, 0, this.width, this.height);
+
+    this.ctx.fillStyle = "rgba(0,0,0,0.7)";
+    this.ctx.fillRect(0, 0, this.width, this.height);
 
     const header = "One Friday in Berlin...";
     const p1 = "you have made plans with your friends to go to a bar.";
@@ -53,9 +80,9 @@ class Game {
 
     this.gameState.levelToStart = 1;
 
-    console.log("Loading Level One Screen. Game state: ", this.gameState);
+    this.ctx.drawImage(this.images.levelOne, 0, 0, this.width, this.height);
 
-    this.ctx.fillStyle = "black";
+    this.ctx.fillStyle = "rgba(0,0,0,0.7)";
     this.ctx.fillRect(0, 0, this.width, this.height);
 
     const header = "On the way to the bar...";
@@ -82,7 +109,7 @@ class Game {
     this.gameState.shouldStartLevel = true;
   }
 
-  loadLevelOneGameOverScreen() {
+  async loadLevelOneGameOverScreen() {
     this.resetLevelOne();
     this.clearGameArea();
     this.removeLevelOneKeyEventListener();
@@ -90,7 +117,15 @@ class Game {
     this.gameState.levelToLoad = 0;
     this.gameState.shouldStartLevel = false;
 
-    this.ctx.fillStyle = "black";
+    this.ctx.drawImage(
+      this.images.levelOneGameOver,
+      0,
+      0,
+      this.width,
+      this.height
+    );
+
+    this.ctx.fillStyle = "rgba(0,0,0,0.7)";
     this.ctx.fillRect(0, 0, this.width, this.height);
 
     const header = "Game Over...";
@@ -102,6 +137,7 @@ class Game {
     this.ctx.fillStyle = "red";
     this.ctx.fillText(header, 50, 100);
 
+    this.ctx.fillStyle = "white";
     this.ctx.font = "25px roboto";
     this.ctx.fillText(p1, 50, 200, 600);
     this.ctx.fillText(p2, 50, 250, 600);
@@ -117,7 +153,15 @@ class Game {
     this.gameState.levelToLoad = 2;
     this.gameState.shouldStartLevel = false;
 
-    this.ctx.fillStyle = "black";
+    this.ctx.drawImage(
+      this.images.levelOneVictory,
+      0,
+      0,
+      this.width,
+      this.height
+    );
+
+    this.ctx.fillStyle = "rgba(0,0,0,0.7)";
     this.ctx.fillRect(0, 0, this.width, this.height);
 
     const header = "Success!";
@@ -144,10 +188,13 @@ class Game {
   }
 
   drawLevelOneBackground() {
-    const levelOneBackgroundImg = new Image();
-    levelOneBackgroundImg.src = "./images/4-lane-road.jpg";
-
-    this.ctx.drawImage(levelOneBackgroundImg, 0, 0, this.width, this.height);
+    this.ctx.drawImage(
+      this.images.levelOneInGame,
+      0,
+      0,
+      this.width,
+      this.height
+    );
   }
 
   updateLevelOneVehiclePos() {
@@ -259,7 +306,9 @@ class Game {
     this.frames = 0;
     this.didLevelStart = false;
 
-    this.ctx.fillStyle = "black";
+    this.ctx.drawImage(this.images.levelTwo, 0, 0, this.width, this.height);
+
+    this.ctx.fillStyle = "rgba(0,0,0,0.7)";
     this.ctx.fillRect(0, 0, this.width, this.height);
 
     const header = "Inside the bar...";
@@ -286,7 +335,7 @@ class Game {
     this.gameState.shouldStartLevel = true;
   }
 
-  loadLevelTwoGameOverScreen() {
+  async loadLevelTwoGameOverScreen() {
     this.resetGame();
     this.clearGameArea();
     this.removeLevelTwoKeyEventListener();
@@ -294,7 +343,15 @@ class Game {
     this.gameState.levelToLoad = 0;
     this.gameState.shouldStartLevel = false;
 
-    this.ctx.fillStyle = "black";
+    this.ctx.drawImage(
+      this.images.levelTwoGameOver,
+      0,
+      0,
+      this.width,
+      this.height
+    );
+
+    this.ctx.fillStyle = "rgba(0,0,0,0.7)";
     this.ctx.fillRect(0, 0, this.width, this.height);
 
     const header = "Well done!";
@@ -327,10 +384,13 @@ class Game {
   }
 
   drawLevelTwoBackground() {
-    const levelTwoBackgroundImg = new Image();
-    levelTwoBackgroundImg.src = "./images/restaurant-blur-background.jpg";
-
-    this.ctx.drawImage(levelTwoBackgroundImg, 0, 0, this.width, this.height);
+    this.ctx.drawImage(
+      this.images.levelTwoInGame,
+      0,
+      0,
+      this.width,
+      this.height
+    );
   }
 
   updateLevelTwoBottlePos() {
@@ -496,7 +556,6 @@ class Game {
   }
 
   loadLevel(levelToLoad) {
-    console.log("Loading level: ", levelToLoad);
     switch (levelToLoad) {
       case 0:
         this.loadStartScreen();
@@ -518,6 +577,46 @@ class Game {
       case 2:
         this.startLevelTwo();
     }
+  }
+
+  async loadImage(src) {
+    const loadedImage = await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        img.src = src;
+        resolve(img);
+      };
+    });
+
+    return loadedImage;
+  }
+
+  loadImages(imageSrcArray, currentIndex) {
+    if (imageSrcArray.length === currentIndex) return;
+
+    let currentImage = new Image();
+    currentImage.src = imageSrcArray[currentIndex];
+
+    currentImage.onload = (event) => {
+      this.loadedImageCount++;
+
+      this.loadedImages.push(currentImage);
+
+      if (this.loadedImageCount === imageSrcArray.length) {
+        const loadedImages = Object.fromEntries(
+          this.imageNames.map((_, i) => {
+            return [this.imageNames[i], this.loadedImages[i]];
+          })
+        );
+
+        this.images = loadedImages;
+
+        this.loadStartScreen();
+      }
+    };
+    currentIndex++;
+    this.loadImages(imageSrcArray, currentIndex);
+    return;
   }
 }
 
@@ -645,9 +744,9 @@ const drawLevelOne = () => {
   game.drawLevelOneBackground();
   playerLevelOne.drawPlayer(playerLevelOneImg);
   game.updateLevelOneVehiclePos();
+  game.countdownToStartLevelOne();
   checkLevelOneCollision(vehicles);
   game.levelOneVictoryCheck(playerLevelOne.yPos);
-  game.countdownToStartLevelOne();
 };
 
 const checkLevelTwoCollision = (bottlesArray) => {
@@ -672,13 +771,12 @@ const drawLevelTwo = () => {
   game.drawLevelTwoBackground();
   playerLevelTwo.drawPlayer(playerLevelTwoImg);
   game.updateLevelTwoBottlePos();
+  game.countdownToStartLevelTwo();
   checkLevelTwoCollision(bottles);
   game.updateLevelTwoScore();
   game.countdownToGameOverLevelTwo();
-  game.countdownToStartLevelTwo();
 };
 
-window.onload = () => {
-  // game.loadStartScreen();
-  game.loadLevelTwo();
-};
+window.addEventListener("load", () => {
+  game.loadImages(game.imageSrcs, 0);
+});
