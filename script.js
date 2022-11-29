@@ -26,7 +26,7 @@ class Game {
       "levelTwoGameOver",
     ];
     this.imageSrcs = [
-      "./images/start-screen.jpg",
+      "./images/start-screen-low-res.jpg",
       "./images/level-one.jpeg",
       "./images/level-one-in-game.jpg",
       "./images/level-one-game-over.jpg",
@@ -600,16 +600,18 @@ class Game {
     currentImage.onload = () => {
       this.loadedImageCount++;
 
-      this.loadedImages.push(currentImage);
+      // this.loadedImages.push(currentImage);
+
+      this.images[this.imageNames[currentIndex]] = currentImage;
 
       if (this.loadedImageCount === imageSrcArray.length) {
-        const loadedImages = Object.fromEntries(
+        /* const loadedImages = Object.fromEntries(
           this.imageNames.map((_, i) => {
             return [this.imageNames[i], this.loadedImages[i]];
           })
         );
 
-        this.images = loadedImages;
+        this.images = loadedImages; */
 
         this.loadStartScreen();
       }
