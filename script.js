@@ -1,4 +1,7 @@
 /** @type {{HTMLCanvasElement}} */
+
+const FONT_STYLE = "retroGame";
+
 class Game {
   constructor() {
     this.canvas = document.getElementById("canvas");
@@ -35,8 +38,11 @@ class Game {
       "./images/level-two-in-game.jpg",
       "./images/level-two-game-over.jpeg",
     ];
-    this.loadedImages = [];
     this.images = {};
+    this.loadedFontCount = 0;
+    this.fontNames = ["retroGame"];
+    this.fontSrcs = ["./fonts/PressStart2P-Regular.ttf"];
+    this.fonts = {};
   }
 
   /* Start Screen */
@@ -58,11 +64,11 @@ class Game {
     const p3 = "Follow the instruction on the screen to know what to do.";
     const p4 = "Begin playing by clicking the 'Start Game' button.";
 
-    this.ctx.font = "50px roboto";
+    this.ctx.font = `28px ${FONT_STYLE}`;
     this.ctx.fillStyle = "#fff";
     this.ctx.fillText(header, 50, 100);
 
-    this.ctx.font = "24px roboto";
+    this.ctx.font = `11px ${FONT_STYLE}`;
     this.ctx.fillText(p1, 50, 200);
     this.ctx.fillText(p2, 50, 250);
     this.ctx.fillText(p3, 50, 300);
@@ -94,11 +100,11 @@ class Game {
       "Control your character by using the up, down, left, and right keyboard buttons.";
     const p5 = "Begin playing by clicking the 'Start Level' button.";
 
-    this.ctx.font = "50px roboto";
+    this.ctx.font = `26px ${FONT_STYLE}`;
     this.ctx.fillStyle = "#fff";
     this.ctx.fillText(header, 50, 100);
 
-    this.ctx.font = "25px roboto";
+    this.ctx.font = `11px ${FONT_STYLE}`;
     this.ctx.fillText(p1, 50, 200, 600);
     this.ctx.fillText(p2, 50, 250, 600);
     this.ctx.fillText(p3, 50, 300, 600);
@@ -133,12 +139,12 @@ class Game {
     const p2 = "You'll need some time to recover at the hospital.";
     const p3 = "But don't worry. Another weekend you can always...";
 
-    this.ctx.font = "50px roboto";
+    this.ctx.font = `32px ${FONT_STYLE}`;
     this.ctx.fillStyle = "red";
     this.ctx.fillText(header, 50, 100);
 
     this.ctx.fillStyle = "white";
-    this.ctx.font = "25px roboto";
+    this.ctx.font = `16px ${FONT_STYLE}`;
     this.ctx.fillText(p1, 50, 200, 600);
     this.ctx.fillText(p2, 50, 250, 600);
     this.ctx.fillText(p3, 50, 300, 600);
@@ -168,11 +174,12 @@ class Game {
     const p1 = "You made it safely to the other side.";
     const p2 = "Time to have some beer with your friends.";
 
-    this.ctx.font = "50px roboto";
+    this.ctx.font = `36px ${FONT_STYLE}`;
     this.ctx.fillStyle = "green";
     this.ctx.fillText(header, 50, 100);
 
-    this.ctx.font = "25px roboto";
+    this.ctx.font = `18px ${FONT_STYLE}`;
+    this.ctx.fillStyle = "white";
     this.ctx.fillText(p1, 50, 200, 600);
     this.ctx.fillText(p2, 50, 250, 600);
 
@@ -247,13 +254,14 @@ class Game {
 
     if (count < -2) return;
 
-    this.ctx.font = "50px roboto";
-    this.ctx.fillStyle = "black";
+    this.ctx.font = `28px ${FONT_STYLE}`;
+    this.ctx.fillStyle = "red";
     if (count === 0 && !this.didLevelStart) {
       this.didLevelStart = true;
       this.abortController = new AbortController();
       const signal = this.abortController.signal;
 
+      this.ctx.fillStyle = "green";
       this.ctx.fillText("GO!", 320, 240);
 
       document.addEventListener(
@@ -277,6 +285,7 @@ class Game {
         { signal: signal }
       );
     } else if (count == 0 && this.didLevelStart) {
+      this.ctx.fillStyle = "green";
       this.ctx.fillText("GO!", 320, 240);
     } else if (count > 0) {
       this.ctx.fillText(`${count}`, 320, 240);
@@ -320,11 +329,11 @@ class Game {
       "Control your character by using the left and right keyboard buttons.";
     const p5 = "Begin playing by clicking the 'Start Level' button.";
 
-    this.ctx.font = "50px roboto";
+    this.ctx.font = `36px ${FONT_STYLE}`;
     this.ctx.fillStyle = "#fff";
     this.ctx.fillText(header, 50, 100);
 
-    this.ctx.font = "25px roboto";
+    this.ctx.font = `12px ${FONT_STYLE}`;
     this.ctx.fillText(p1, 50, 200, 600);
     this.ctx.fillText(p2, 50, 250, 600);
     this.ctx.fillText(p3, 50, 300, 600);
@@ -355,16 +364,16 @@ class Game {
     this.ctx.fillRect(0, 0, this.width, this.height);
 
     const header = "Well done!";
-    const p1 = `You drank ${this.levelTwoScore} bottles of beer...`;
+    const p1 = `You drank ${this.levelTwoScore} beers...`;
     const p2 = "...wait..looks like it was a bit too much.";
     const p3 = "You pass out and your friends have to take you home.";
     const p4 = "But don't worry. Next weekend you can always...";
 
-    this.ctx.font = "50px roboto";
+    this.ctx.font = `36px ${FONT_STYLE}`;
     this.ctx.fillStyle = "green";
     this.ctx.fillText(header, 50, 100);
 
-    this.ctx.font = "25px roboto";
+    this.ctx.font = `13px ${FONT_STYLE}`;
     this.ctx.fillStyle = "white";
     this.ctx.fillText(p1, 50, 200, 600);
     this.ctx.fillText(p2, 50, 250, 600);
@@ -415,9 +424,9 @@ class Game {
   updateLevelTwoScore() {
     const score = this.levelTwoScore;
 
-    this.ctx.font = "30px roboto";
+    this.ctx.font = `20px ${FONT_STYLE}`;
     this.ctx.fillStyle = "white";
-    this.ctx.fillText(`Score: ${score}`, 580, 30);
+    this.ctx.fillText(`Score: ${score}`, 520, 30);
   }
 
   countdownToStartLevelTwo() {
@@ -425,13 +434,15 @@ class Game {
 
     if (count < -2) return;
 
-    this.ctx.font = "50px roboto";
-    this.ctx.fillStyle = "black";
+    this.ctx.font = `28px ${FONT_STYLE}`;
+    this.ctx.fillStyle = "red";
+
     if (count === 0 && !this.didLevelStart) {
       this.didLevelStart = true;
       this.abortController = new AbortController();
       const signal = this.abortController.signal;
 
+      this.ctx.fillstyle = "green";
       this.ctx.fillText("GO!", 320, 240);
 
       document.addEventListener(
@@ -449,8 +460,10 @@ class Game {
         { signal: signal }
       );
     } else if (count == 0 && this.didLevelStart) {
+      this.ctx.fillStyle = "green";
       this.ctx.fillText("GO!", 320, 240);
     } else if (count > 0) {
+      this.ctx.fillStyle = "red";
       this.ctx.fillText(`${count}`, 320, 240);
     }
   }
@@ -465,6 +478,8 @@ class Game {
       this.loadLevelTwoGameOverScreen();
       return;
     }
+
+    this.ctx.font = `20px ${FONT_STYLE}`;
 
     if (count > 3) {
       this.ctx.fillStyle = "white";
@@ -514,6 +529,7 @@ class Game {
       rectangleHeight,
     };
 
+    this.ctx.font = `13px ${FONT_STYLE}`;
     this.ctx.fillStyle = "white";
     this.ctx.fillText(text, 290, 483);
 
@@ -579,18 +595,6 @@ class Game {
     }
   }
 
-  async loadImage(src) {
-    const loadedImage = await new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => {
-        img.src = src;
-        resolve(img);
-      };
-    });
-
-    return loadedImage;
-  }
-
   loadImages(imageSrcArray, currentIndex) {
     if (imageSrcArray.length === currentIndex) return;
 
@@ -600,26 +604,38 @@ class Game {
     currentImage.onload = () => {
       this.loadedImageCount++;
 
-      // this.loadedImages.push(currentImage);
-
       this.images[this.imageNames[currentIndex]] = currentImage;
 
       if (this.loadedImageCount === imageSrcArray.length) {
-        /* const loadedImages = Object.fromEntries(
-          this.imageNames.map((_, i) => {
-            return [this.imageNames[i], this.loadedImages[i]];
-          })
-        );
-
-        this.images = loadedImages; */
-
-        this.loadStartScreen();
+        this.loadFonts(this.fontSrcs, 0);
       }
 
       ++currentIndex;
       this.loadImages(imageSrcArray, currentIndex);
       return;
     };
+  }
+
+  loadFonts(fontSrcArray, currentIndex) {
+    if (fontSrcArray.length === currentIndex) return;
+
+    let currentFont = new FontFace(
+      `${this.fontNames[currentIndex]}`,
+      `url(${this.fontSrcs[currentIndex]})`
+    );
+
+    currentFont.load().then((font) => {
+      document.fonts.add(font);
+      this.loadedFontCount++;
+
+      if (this.loadedFontCount === fontSrcArray.length) {
+        this.loadStartScreen();
+      }
+
+      ++currentIndex;
+      this.loadFonts(fontSrcArray, currentIndex);
+      return;
+    });
   }
 }
 
