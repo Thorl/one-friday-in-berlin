@@ -597,7 +597,7 @@ class Game {
     let currentImage = new Image();
     currentImage.src = imageSrcArray[currentIndex];
 
-    currentImage.onload = (event) => {
+    currentImage.onload = () => {
       this.loadedImageCount++;
 
       this.loadedImages.push(currentImage);
@@ -613,10 +613,11 @@ class Game {
 
         this.loadStartScreen();
       }
+
+      ++currentIndex;
+      this.loadImages(imageSrcArray, currentIndex);
+      return;
     };
-    currentIndex++;
-    this.loadImages(imageSrcArray, currentIndex);
-    return;
   }
 }
 
