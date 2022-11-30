@@ -66,6 +66,7 @@ class Game {
 
     this.ctx.font = `28px ${FONT_STYLE}`;
     this.ctx.fillStyle = "#fff";
+    this.ctx.textAlign = "left";
     this.ctx.fillText(header, 50, 100);
 
     this.ctx.font = `11px ${FONT_STYLE}`;
@@ -102,6 +103,7 @@ class Game {
 
     this.ctx.font = `26px ${FONT_STYLE}`;
     this.ctx.fillStyle = "#fff";
+    this.ctx.textAlign = "left";
     this.ctx.fillText(header, 50, 100);
 
     this.ctx.font = `11px ${FONT_STYLE}`;
@@ -141,6 +143,7 @@ class Game {
 
     this.ctx.font = `32px ${FONT_STYLE}`;
     this.ctx.fillStyle = "red";
+    this.ctx.textAlign = "left";
     this.ctx.fillText(header, 50, 100);
 
     this.ctx.fillStyle = "white";
@@ -176,6 +179,7 @@ class Game {
 
     this.ctx.font = `36px ${FONT_STYLE}`;
     this.ctx.fillStyle = "green";
+    this.ctx.textAlign = "left";
     this.ctx.fillText(header, 50, 100);
 
     this.ctx.font = `18px ${FONT_STYLE}`;
@@ -250,7 +254,7 @@ class Game {
   }
 
   countdownToStartLevelOne() {
-    let count = 5 - Math.floor(this.frames / 100);
+    let count = 3 - Math.floor(this.frames / 100);
 
     if (count < -2) return;
 
@@ -262,7 +266,7 @@ class Game {
       const signal = this.abortController.signal;
 
       this.ctx.fillStyle = "green";
-      this.ctx.fillText("GO!", 320, 240);
+      this.ctx.fillText("GO!", this.width / 2, 240);
 
       document.addEventListener(
         "keydown",
@@ -286,9 +290,9 @@ class Game {
       );
     } else if (count == 0 && this.didLevelStart) {
       this.ctx.fillStyle = "green";
-      this.ctx.fillText("GO!", 320, 240);
+      this.ctx.fillText("GO!", this.width / 2, 240);
     } else if (count > 0) {
-      this.ctx.fillText(`${count}`, 320, 240);
+      this.ctx.fillText(`${count}`, this.width / 2, 240);
     }
   }
 
@@ -297,7 +301,7 @@ class Game {
   }
 
   resetLevelOne() {
-    playerLevelOne = new Player(300, 485, 40, 60);
+    playerLevelOne = new Player(330, 485, 40, 60);
 
     vehicles = [];
 
@@ -331,6 +335,7 @@ class Game {
 
     this.ctx.font = `36px ${FONT_STYLE}`;
     this.ctx.fillStyle = "#fff";
+    this.ctx.textAlign = "left";
     this.ctx.fillText(header, 50, 100);
 
     this.ctx.font = `12px ${FONT_STYLE}`;
@@ -371,6 +376,7 @@ class Game {
 
     this.ctx.font = `36px ${FONT_STYLE}`;
     this.ctx.fillStyle = "green";
+    this.ctx.textAlign = "left";
     this.ctx.fillText(header, 50, 100);
 
     this.ctx.font = `13px ${FONT_STYLE}`;
@@ -404,15 +410,15 @@ class Game {
 
   updateLevelTwoBottlePos() {
     if (!this.didLevelStart) return;
-    const startingYPos = 0;
+    const yPosition = 0;
 
     const minX = 40;
-    const maxX = 760;
+    const maxX = 680;
 
     const xPosition = Math.floor(Math.random() * (maxX - minX + 1) + minX);
 
     if (this.frames % 50 === 0) {
-      bottles.push(new Bottle(xPosition, startingYPos, 20, 70));
+      bottles.push(new Bottle(xPosition, yPosition, 20, 70));
     }
 
     for (let i = 0; i < bottles.length; i++) {
@@ -426,11 +432,11 @@ class Game {
 
     this.ctx.font = `20px ${FONT_STYLE}`;
     this.ctx.fillStyle = "white";
-    this.ctx.fillText(`Score: ${score}`, 520, 30);
+    this.ctx.fillText(`Score: ${score}`, 590, 30);
   }
 
   countdownToStartLevelTwo() {
-    let count = 5 - Math.floor(this.frames / 100);
+    let count = 3 - Math.floor(this.frames / 100);
 
     if (count < -2) return;
 
@@ -469,7 +475,7 @@ class Game {
   }
 
   countdownToGameOverLevelTwo() {
-    let count = 15 - Math.floor(this.frames / 100);
+    let count = 13 - Math.floor(this.frames / 100);
 
     if (!this.didLevelStart) return;
 
@@ -486,7 +492,7 @@ class Game {
     } else {
       this.ctx.fillStyle = "red";
     }
-    this.ctx.fillText(`Timer: ${count}`, 10, 30);
+    this.ctx.fillText(`Timer: ${count}`, 90, 30);
   }
 
   removeLevelTwoKeyEventListener() {
@@ -494,11 +500,11 @@ class Game {
   }
 
   resetGame() {
-    playerLevelOne = new Player(300, 485, 40, 60);
+    playerLevelOne = new Player(330, 485, 40, 60);
 
     vehicles = [];
 
-    playerLevelTwo = new Player(300, 340, 100, 200);
+    playerLevelTwo = new Player(275, 340, 100, 200);
 
     bottles = [];
 
@@ -513,7 +519,7 @@ class Game {
 
   drawButton(text) {
     const rectangle = new Path2D();
-    const rectangleX = 250;
+    const rectangleX = this.width / 3;
     const rectangleY = 450;
     const rectangleWidth = 200;
     const rectangleHeight = 50;
@@ -531,22 +537,26 @@ class Game {
 
     this.ctx.font = `13px ${FONT_STYLE}`;
     this.ctx.fillStyle = "white";
-    this.ctx.fillText(text, 290, 483);
+    this.ctx.textAlign = "center";
+    this.ctx.fillText(text, 335, 483);
 
     this.setUpEventListener(button, buttonDimensions);
   }
 
   setUpEventListener(button, buttonDimensions) {
+    button.rect(
+      buttonDimensions.rectangleX,
+      buttonDimensions.rectangleY,
+      buttonDimensions.rectangleWidth,
+      buttonDimensions.rectangleHeight
+    );
+
+    this.abortController = new AbortController();
+    const signal = this.abortController.signal;
+
     this.canvas.addEventListener(
       "click",
       (event) => {
-        button.rect(
-          buttonDimensions.rectangleX,
-          buttonDimensions.rectangleY,
-          buttonDimensions.rectangleWidth,
-          buttonDimensions.rectangleHeight
-        );
-
         const isMouseOnBtn = this.ctx.isPointInPath(
           button,
           event.offsetX,
@@ -554,12 +564,14 @@ class Game {
         );
 
         if (isMouseOnBtn && !this.gameState.shouldStartLevel) {
+          this.abortController.abort();
           this.loadLevel(this.gameState.levelToLoad);
         } else if (isMouseOnBtn && this.gameState.shouldStartLevel) {
+          this.abortController.abort();
           this.startLevel(this.gameState.levelToStart);
         }
       },
-      { once: true }
+      { signal: signal }
     );
   }
 
@@ -724,12 +736,12 @@ const ctx = game.ctx;
 const playerLevelOneImg = new Image();
 playerLevelOneImg.src = "./images/player-level-one.png";
 
-let playerLevelOne = new Player(300, 485, 40, 60);
+let playerLevelOne = new Player(330, 485, 40, 60);
 
 const playerLevelTwoImg = new Image();
 playerLevelTwoImg.src = "./images/player-level-two.png";
 
-let playerLevelTwo = new Player(300, 340, 100, 200);
+let playerLevelTwo = new Player(275, 340, 100, 200);
 
 let bottles = [];
 

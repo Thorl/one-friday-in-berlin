@@ -1,8 +1,22 @@
 html {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 99vw;
+  height: 97vh;
+
+  background-image: url("./images/start-screen-low-res.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 80% 50%;
 }
 
 canvas {
-  border: 1px solid black;
+  border: 5px solid black;
 }
