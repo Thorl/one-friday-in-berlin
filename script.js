@@ -21,27 +21,32 @@ class Game {
       "startScreen",
       "levelOne",
       "levelOneInGame",
+      "playerLevelOne",
+      "bus",
       "levelOneGameOver",
       "levelOneVictory",
       "levelTwo",
       "levelTwoInGame",
+      "playerLevelTwo",
+      "beerBottle",
       "levelTwoGameOver",
     ];
     this.imageSrcs = [
       "./images/start-screen-low-res.jpg",
       "./images/level-one.jpeg",
       "./images/level-one-in-game.jpg",
+      "./images/player-level-one.png",
+      "./images/bus.png",
       "./images/level-one-game-over.jpg",
       "./images/level-one-victory.jpeg",
       "./images/level-two.jpeg",
       "./images/level-two-in-game.jpg",
+      "./images/player-level-two.png",
+      "./images/beer-bottle.png",
       "./images/level-two-game-over.jpeg",
     ];
     this.images = {};
     this.loadedFontCount = 0;
-    this.fontNames = ["retroGame"];
-    this.fontSrcs = ["./fonts/PressStart2P-Regular.ttf"];
-    this.fonts = {};
   }
 
   /* Utilities */
@@ -148,7 +153,7 @@ class Game {
       this.images[this.imageNames[currentIndex]] = currentImage;
 
       if (this.loadedImageCount === imageSrcArray.length) {
-        this.loadFonts(this.fontSrcs, 0);
+        this.loadFonts();
       }
 
       ++currentIndex;
@@ -157,25 +162,15 @@ class Game {
     };
   }
 
-  loadFonts(fontSrcArray, currentIndex) {
-    if (fontSrcArray.length === currentIndex) return;
-
-    let currentFont = new FontFace(
-      `${this.fontNames[currentIndex]}`,
-      `url(${this.fontSrcs[currentIndex]})`
+  loadFonts() {
+    let font = new FontFace(
+      "retroGame",
+      "url(./fonts/PressStart2P-Regular.ttf)"
     );
 
-    currentFont.load().then((font) => {
-      document.fonts.add(font);
-      this.loadedFontCount++;
-
-      if (this.loadedFontCount === fontSrcArray.length) {
-        startScreen.load();
-      }
-
-      ++currentIndex;
-      this.loadFonts(fontSrcArray, currentIndex);
-      return;
+    font.load().then((loadedFont) => {
+      document.fonts.add(loadedFont);
+      startScreen.load();
     });
   }
 }
@@ -726,20 +721,17 @@ class Vehicle extends GameObject {
 
   drawVehicle() {
     const ctx = game.ctx;
-    const vehicleImg = new Image();
-    vehicleImg.src = "./images/bus-top-down-v3.png";
-
-    ctx.drawImage(vehicleImg, this.xPos, this.yPos, this.width, this.height);
+    ctx.drawImage(
+      game.images.bus,
+      this.xPos,
+      this.yPos,
+      this.width,
+      this.height
+    );
   }
 }
 
-const playerLevelOneImg = new Image();
-playerLevelOneImg.src = "./images/player-level-one.png";
-
 let playerLevelOne = new Player(330, 485, 40, 60);
-
-const playerLevelTwoImg = new Image();
-playerLevelTwoImg.src = "./images/player-level-two.png";
 
 let playerLevelTwo = new Player(275, 340, 100, 200);
 
@@ -752,10 +744,13 @@ class Bottle extends GameObject {
 
   drawBottle() {
     const ctx = game.ctx;
-    const bottleImg = new Image();
-    bottleImg.src = "./images/beer-bottle.png";
-
-    ctx.drawImage(bottleImg, this.xPos, this.yPos, this.width, this.height);
+    ctx.drawImage(
+      game.images.beerBottle,
+      this.xPos,
+      this.yPos,
+      this.width,
+      this.height
+    );
   }
 }
 
@@ -773,7 +768,7 @@ const drawLevelOne = () => {
   game.updateFrames();
   game.clearGameArea();
   levelOne.drawBackground();
-  playerLevelOne.drawPlayer(playerLevelOneImg);
+  playerLevelOne.drawPlayer(game.images.playerLevelOne);
   levelOne.updateVehiclePos();
   levelOne.countdownToStart();
   checkLevelOneCollision(vehicles);
@@ -800,7 +795,7 @@ const drawLevelTwo = () => {
   game.updateFrames();
   game.clearGameArea();
   levelTwo.drawBackground();
-  playerLevelTwo.drawPlayer(playerLevelTwoImg);
+  playerLevelTwo.drawPlayer(game.images.playerLevelTwo);
   levelTwo.updateBottlePos();
   levelTwo.countdownToStart();
   checkLevelTwoCollision(bottles);
