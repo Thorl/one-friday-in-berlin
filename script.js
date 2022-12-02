@@ -590,7 +590,6 @@ class LevelTwo {
   }
 
   loadGameOverScreen() {
-    levelTwo.resetGame();
     game.clearGameArea();
     levelTwo.removeKeyDownEventListener();
 
@@ -626,7 +625,7 @@ class LevelTwo {
     game.ctx.fillText(p3, 50, 300, 600);
     game.ctx.fillText(p4, 50, 350, 600);
 
-    game.levelTwoScore = 0;
+    this.resetGame();
     game.drawButton("Try Again");
   }
 
@@ -642,6 +641,8 @@ class LevelTwo {
     playerLevelTwo = new Player(275, 340, 100, 200);
 
     bottles = [];
+
+    this.levelTwoScore = 0;
 
     game.frames = 0;
 
