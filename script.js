@@ -16,7 +16,6 @@ class Game {
     this.didLevelStart = false;
     this.frames = 0;
     this.abortController;
-    this.levelTwoScore = 0;
     this.loadedImageCount = 0;
     this.imageNames = [
       "startScreen",
@@ -44,476 +43,6 @@ class Game {
     this.fontSrcs = ["./fonts/PressStart2P-Regular.ttf"];
     this.fonts = {};
   }
-
-  /* Start Screen */
-
-  loadStartScreen() {
-    this.clearGameArea();
-    clearTimeout(this.timeoutId);
-    this.gameState.levelToLoad = 1;
-    this.gameState.shouldStartLevel = false;
-
-    this.ctx.drawImage(this.images.startScreen, 0, 0, this.width, this.height);
-
-    this.ctx.fillStyle = "rgba(0,0,0,0.7)";
-    this.ctx.fillRect(0, 0, this.width, this.height);
-
-    const header = "One Friday in Berlin...";
-    const p1 = "you have made plans with your friends to go to a bar.";
-    const p2 = "During the night, you'll have to perform different tasks.";
-    const p3 = "Follow the instruction on the screen to know what to do.";
-    const p4 = "Begin playing by clicking the 'Start Game' button.";
-
-    this.ctx.font = `28px ${FONT_STYLE}`;
-    this.ctx.fillStyle = "#fff";
-    this.ctx.textAlign = "left";
-    this.ctx.fillText(header, 50, 100);
-
-    this.ctx.font = `11px ${FONT_STYLE}`;
-    this.ctx.fillText(p1, 50, 200);
-    this.ctx.fillText(p2, 50, 250);
-    this.ctx.fillText(p3, 50, 300);
-    this.ctx.fillText(p4, 50, 350);
-
-    this.drawButton("Start Game");
-  }
-
-  /*  */
-
-  /* Level One */
-
-  loadLevelOne() {
-    this.clearGameArea();
-
-    this.gameState.levelToStart = 1;
-
-    this.ctx.drawImage(this.images.levelOne, 0, 0, this.width, this.height);
-
-    this.ctx.fillStyle = "rgba(0,0,0,0.7)";
-    this.ctx.fillRect(0, 0, this.width, this.height);
-
-    const header = "On the way to the bar...";
-    const p1 = "you decide to not find the nearest crosswalk.";
-    const p2 = "Instead, you opt for crossing the 4-lane road.";
-    const p3 =
-      "Get to the other side of the road as quickly as possible without getting hit by a bus.";
-    const p4 =
-      "Control your character by using the up, down, left, and right keyboard buttons.";
-    const p5 = "Begin playing by clicking the 'Start Level' button.";
-
-    this.ctx.font = `26px ${FONT_STYLE}`;
-    this.ctx.fillStyle = "#fff";
-    this.ctx.textAlign = "left";
-    this.ctx.fillText(header, 50, 100);
-
-    this.ctx.font = `11px ${FONT_STYLE}`;
-    this.ctx.fillText(p1, 50, 200, 600);
-    this.ctx.fillText(p2, 50, 250, 600);
-    this.ctx.fillText(p3, 50, 300, 600);
-    this.ctx.fillText(p4, 50, 350, 600);
-    this.ctx.fillText(p5, 50, 400, 600);
-
-    this.drawButton("Start Level");
-    this.gameState.shouldStartLevel = true;
-  }
-
-  async loadLevelOneGameOverScreen() {
-    this.resetLevelOne();
-    this.clearGameArea();
-    this.removeLevelOneKeyEventListener();
-
-    this.gameState.levelToLoad = 0;
-    this.gameState.shouldStartLevel = false;
-
-    this.ctx.drawImage(
-      this.images.levelOneGameOver,
-      0,
-      0,
-      this.width,
-      this.height
-    );
-
-    this.ctx.fillStyle = "rgba(0,0,0,0.7)";
-    this.ctx.fillRect(0, 0, this.width, this.height);
-
-    const header = "Game Over...";
-    const p1 = "you were hit by a bus.";
-    const p2 = "You'll need some time to recover at the hospital.";
-    const p3 = "But don't worry. Another weekend you can always...";
-
-    this.ctx.font = `32px ${FONT_STYLE}`;
-    this.ctx.fillStyle = "red";
-    this.ctx.textAlign = "left";
-    this.ctx.fillText(header, 50, 100);
-
-    this.ctx.fillStyle = "white";
-    this.ctx.font = `16px ${FONT_STYLE}`;
-    this.ctx.fillText(p1, 50, 200, 600);
-    this.ctx.fillText(p2, 50, 250, 600);
-    this.ctx.fillText(p3, 50, 300, 600);
-
-    this.drawButton("Try Again");
-  }
-
-  loadLevelOneVictoryScreen() {
-    this.clearGameArea();
-    this.removeLevelOneKeyEventListener();
-
-    this.gameState.levelToLoad = 2;
-    this.gameState.shouldStartLevel = false;
-
-    this.ctx.drawImage(
-      this.images.levelOneVictory,
-      0,
-      0,
-      this.width,
-      this.height
-    );
-
-    this.ctx.fillStyle = "rgba(0,0,0,0.7)";
-    this.ctx.fillRect(0, 0, this.width, this.height);
-
-    const header = "Success!";
-    const p1 = "You made it safely to the other side.";
-    const p2 = "Time to have some beer with your friends.";
-
-    this.ctx.font = `36px ${FONT_STYLE}`;
-    this.ctx.fillStyle = "green";
-    this.ctx.textAlign = "left";
-    this.ctx.fillText(header, 50, 100);
-
-    this.ctx.font = `18px ${FONT_STYLE}`;
-    this.ctx.fillStyle = "white";
-    this.ctx.fillText(p1, 50, 200, 600);
-    this.ctx.fillText(p2, 50, 250, 600);
-
-    this.drawButton("Enter Bar");
-  }
-
-  startLevelOne() {
-    this.levelOneInterval = setInterval(drawLevelOne, 10);
-  }
-
-  stopLevelOne() {
-    clearInterval(this.levelOneInterval);
-  }
-
-  drawLevelOneBackground() {
-    this.ctx.drawImage(
-      this.images.levelOneInGame,
-      0,
-      0,
-      this.width,
-      this.height
-    );
-  }
-
-  updateLevelOneVehiclePos() {
-    const startingXPos = game.width;
-    const rowFourStartingYPos = 400;
-    const rowThreeStartingYPos = 290;
-    const rowTwoStartingYPos = 180;
-    const rowOneStartingYpos = 65;
-
-    if (this.frames % 300 === 0) {
-      vehicles.push(new Vehicle(startingXPos, rowOneStartingYpos, 150, 75, 1));
-    }
-
-    if (this.frames % 200 === 0) {
-      vehicles.push(new Vehicle(startingXPos, rowTwoStartingYPos, 150, 75, 2));
-
-      vehicles.push(
-        new Vehicle(startingXPos, rowThreeStartingYPos, 150, 75, 3)
-      );
-
-      vehicles.push(new Vehicle(startingXPos, rowFourStartingYPos, 150, 75, 6));
-    }
-
-    for (let i = 0; i < vehicles.length; i++) {
-      vehicles[i].xPos -= vehicles[i].speed;
-      vehicles[i].drawVehicle();
-    }
-  }
-
-  levelOneCollisionCheck(vehicle) {
-    return !(
-      playerLevelOne.top() > vehicle.bottom() ||
-      playerLevelOne.bottom() < vehicle.top() ||
-      playerLevelOne.left() > vehicle.right() ||
-      (playerLevelOne.left() < vehicle.left() &&
-        playerLevelOne.right() < vehicle.left()) ||
-      playerLevelOne.right() < vehicle.left()
-    );
-  }
-
-  levelOneVictoryCheck(playerYPos) {
-    if (playerYPos < 30) {
-      this.stopLevelOne();
-      this.loadLevelOneVictoryScreen();
-    }
-  }
-
-  countdownToStartLevelOne() {
-    let count = 3 - Math.floor(this.frames / 100);
-
-    if (count < -2) return;
-
-    this.ctx.font = `28px ${FONT_STYLE}`;
-    this.ctx.fillStyle = "red";
-    if (count === 0 && !this.didLevelStart) {
-      this.didLevelStart = true;
-      this.abortController = new AbortController();
-      const signal = this.abortController.signal;
-
-      this.ctx.fillStyle = "green";
-      this.ctx.fillText("GO!", this.width / 2, 240);
-
-      document.addEventListener(
-        "keydown",
-        (event) => {
-          switch (event.keyCode) {
-            case 38:
-              playerLevelOne.moveUp();
-              break;
-            case 40:
-              playerLevelOne.moveDown();
-              break;
-            case 37:
-              playerLevelOne.moveLeft();
-              break;
-            case 39:
-              playerLevelOne.moveRight();
-              break;
-          }
-        },
-        { signal: signal }
-      );
-    } else if (count == 0 && this.didLevelStart) {
-      this.ctx.fillStyle = "green";
-      this.ctx.fillText("GO!", this.width / 2, 240);
-    } else if (count > 0) {
-      this.ctx.fillText(`${count}`, this.width / 2, 240);
-    }
-  }
-
-  removeLevelOneKeyEventListener() {
-    this.abortController.abort();
-  }
-
-  resetLevelOne() {
-    playerLevelOne = new Player(330, 485, 40, 60);
-
-    vehicles = [];
-
-    this.frames = 0;
-
-    this.didLevelStart = false;
-  }
-
-  /* Level Two */
-
-  loadLevelTwo() {
-    this.clearGameArea();
-
-    this.gameState.levelToStart = 2;
-    this.frames = 0;
-    this.didLevelStart = false;
-
-    this.ctx.drawImage(this.images.levelTwo, 0, 0, this.width, this.height);
-
-    this.ctx.fillStyle = "rgba(0,0,0,0.7)";
-    this.ctx.fillRect(0, 0, this.width, this.height);
-
-    const header = "Inside the bar...";
-    const p1 = "you're very thirsty and begin ordering beer.";
-    const p2 = "You tell the bartender to just keep them coming.";
-    const p3 =
-      "Drink as much beer as you can before the timer runs out by collecting the falling bottles.";
-    const p4 =
-      "Control your character by using the left and right keyboard buttons.";
-    const p5 = "Begin playing by clicking the 'Start Level' button.";
-
-    this.ctx.font = `36px ${FONT_STYLE}`;
-    this.ctx.fillStyle = "#fff";
-    this.ctx.textAlign = "left";
-    this.ctx.fillText(header, 50, 100);
-
-    this.ctx.font = `12px ${FONT_STYLE}`;
-    this.ctx.fillText(p1, 50, 200, 600);
-    this.ctx.fillText(p2, 50, 250, 600);
-    this.ctx.fillText(p3, 50, 300, 600);
-    this.ctx.fillText(p4, 50, 350, 600);
-    this.ctx.fillText(p5, 50, 400, 600);
-
-    this.drawButton("Start Level");
-    this.gameState.shouldStartLevel = true;
-  }
-
-  async loadLevelTwoGameOverScreen() {
-    this.resetGame();
-    this.clearGameArea();
-    this.removeLevelTwoKeyEventListener();
-
-    this.gameState.levelToLoad = 0;
-    this.gameState.shouldStartLevel = false;
-
-    this.ctx.drawImage(
-      this.images.levelTwoGameOver,
-      0,
-      0,
-      this.width,
-      this.height
-    );
-
-    this.ctx.fillStyle = "rgba(0,0,0,0.7)";
-    this.ctx.fillRect(0, 0, this.width, this.height);
-
-    const header = "Well done!";
-    const p1 = `You drank ${this.levelTwoScore} beers...`;
-    const p2 = "...wait..looks like it was a bit too much.";
-    const p3 = "You pass out and your friends have to take you home.";
-    const p4 = "But don't worry. Next weekend you can always...";
-
-    this.ctx.font = `36px ${FONT_STYLE}`;
-    this.ctx.fillStyle = "green";
-    this.ctx.textAlign = "left";
-    this.ctx.fillText(header, 50, 100);
-
-    this.ctx.font = `13px ${FONT_STYLE}`;
-    this.ctx.fillStyle = "white";
-    this.ctx.fillText(p1, 50, 200, 600);
-    this.ctx.fillText(p2, 50, 250, 600);
-    this.ctx.fillText(p3, 50, 300, 600);
-    this.ctx.fillText(p4, 50, 350, 600);
-
-    this.levelTwoScore = 0;
-    this.drawButton("Try Again");
-  }
-
-  startLevelTwo() {
-    this.levelTwoInterval = setInterval(drawLevelTwo, 10);
-  }
-
-  stopLevelTwo() {
-    clearInterval(this.levelTwoInterval);
-  }
-
-  drawLevelTwoBackground() {
-    this.ctx.drawImage(
-      this.images.levelTwoInGame,
-      0,
-      0,
-      this.width,
-      this.height
-    );
-  }
-
-  updateLevelTwoBottlePos() {
-    if (!this.didLevelStart) return;
-    const yPosition = 0;
-
-    const minX = 40;
-    const maxX = 680;
-
-    const xPosition = Math.floor(Math.random() * (maxX - minX + 1) + minX);
-
-    if (this.frames % 50 === 0) {
-      bottles.push(new Bottle(xPosition, yPosition, 20, 70));
-    }
-
-    for (let i = 0; i < bottles.length; i++) {
-      bottles[i].yPos += 4;
-      bottles[i].drawBottle();
-    }
-  }
-
-  updateLevelTwoScore() {
-    const score = this.levelTwoScore;
-
-    this.ctx.font = `20px ${FONT_STYLE}`;
-    this.ctx.fillStyle = "white";
-    this.ctx.fillText(`Score: ${score}`, 590, 30);
-  }
-
-  countdownToStartLevelTwo() {
-    let count = 3 - Math.floor(this.frames / 100);
-
-    if (count < -2) return;
-
-    this.ctx.font = `28px ${FONT_STYLE}`;
-    this.ctx.fillStyle = "red";
-
-    if (count === 0 && !this.didLevelStart) {
-      this.didLevelStart = true;
-      this.abortController = new AbortController();
-      const signal = this.abortController.signal;
-
-      this.ctx.fillstyle = "green";
-      this.ctx.fillText("GO!", 320, 240);
-
-      document.addEventListener(
-        "keydown",
-        (event) => {
-          switch (event.keyCode) {
-            case 37:
-              playerLevelTwo.moveLeft();
-              break;
-            case 39:
-              playerLevelTwo.moveRight();
-              break;
-          }
-        },
-        { signal: signal }
-      );
-    } else if (count == 0 && this.didLevelStart) {
-      this.ctx.fillStyle = "green";
-      this.ctx.fillText("GO!", 320, 240);
-    } else if (count > 0) {
-      this.ctx.fillStyle = "red";
-      this.ctx.fillText(`${count}`, 320, 240);
-    }
-  }
-
-  countdownToGameOverLevelTwo() {
-    let count = 13 - Math.floor(this.frames / 100);
-
-    if (!this.didLevelStart) return;
-
-    if (count === 0) {
-      this.stopLevelTwo();
-      this.loadLevelTwoGameOverScreen();
-      return;
-    }
-
-    this.ctx.font = `20px ${FONT_STYLE}`;
-
-    if (count > 3) {
-      this.ctx.fillStyle = "white";
-    } else {
-      this.ctx.fillStyle = "red";
-    }
-    this.ctx.fillText(`Timer: ${count}`, 90, 30);
-  }
-
-  removeLevelTwoKeyEventListener() {
-    this.abortController.abort();
-  }
-
-  resetGame() {
-    playerLevelOne = new Player(330, 485, 40, 60);
-
-    vehicles = [];
-
-    playerLevelTwo = new Player(275, 340, 100, 200);
-
-    bottles = [];
-
-    this.frames = 0;
-
-    this.didLevelStart = false;
-  }
-
-  /*  */
 
   /* Utilities */
 
@@ -586,13 +115,13 @@ class Game {
   loadLevel(levelToLoad) {
     switch (levelToLoad) {
       case 0:
-        this.loadStartScreen();
+        startScreen.load();
         break;
       case 1:
-        this.loadLevelOne();
+        levelOne.load();
         break;
       case 2:
-        this.loadLevelTwo();
+        levelTwo.load();
         break;
     }
   }
@@ -600,10 +129,10 @@ class Game {
   startLevel(levelToStart) {
     switch (levelToStart) {
       case 1:
-        this.startLevelOne();
+        levelOne.start();
         break;
       case 2:
-        this.startLevelTwo();
+        levelTwo.start();
     }
   }
 
@@ -641,7 +170,7 @@ class Game {
       this.loadedFontCount++;
 
       if (this.loadedFontCount === fontSrcArray.length) {
-        this.loadStartScreen();
+        startScreen.load();
       }
 
       ++currentIndex;
@@ -651,7 +180,480 @@ class Game {
   }
 }
 
+class StartScreen {
+  load() {
+    game.clearGameArea();
+    game.gameState.levelToLoad = 1;
+    game.gameState.shouldStartLevel = false;
+
+    game.ctx.drawImage(game.images.startScreen, 0, 0, game.width, game.height);
+
+    game.ctx.fillStyle = "rgba(0,0,0,0.7)";
+    game.ctx.fillRect(0, 0, game.width, game.height);
+
+    const header = "One Friday in Berlin...";
+    const p1 = "you have made plans with your friends to go to a bar.";
+    const p2 = "During the night, you'll have to perform different tasks.";
+    const p3 = "Follow the instruction on the screen to know what to do.";
+    const p4 = "Begin playing by clicking the 'Start Game' button.";
+
+    game.ctx.font = `28px ${FONT_STYLE}`;
+    game.ctx.fillStyle = "#fff";
+    game.ctx.textAlign = "left";
+    game.ctx.fillText(header, 50, 100);
+
+    game.ctx.font = `11px ${FONT_STYLE}`;
+    game.ctx.fillText(p1, 50, 200);
+    game.ctx.fillText(p2, 50, 250);
+    game.ctx.fillText(p3, 50, 300);
+    game.ctx.fillText(p4, 50, 350);
+
+    game.drawButton("Start Game");
+  }
+}
+
+class LevelOne {
+  load() {
+    game.clearGameArea();
+
+    game.gameState.levelToStart = 1;
+
+    game.ctx.drawImage(game.images.levelOne, 0, 0, game.width, game.height);
+
+    game.ctx.fillStyle = "rgba(0,0,0,0.7)";
+    game.ctx.fillRect(0, 0, game.width, game.height);
+
+    const header = "On the way to the bar...";
+    const p1 = "you decide to not find the nearest crosswalk.";
+    const p2 = "Instead, you opt for crossing the 4-lane road.";
+    const p3 =
+      "Get to the other side of the road as quickly as possible without getting hit by a bus.";
+    const p4 =
+      "Control your character by using the up, down, left, and right keyboard buttons.";
+    const p5 = "Begin playing by clicking the 'Start Level' button.";
+
+    game.ctx.font = `26px ${FONT_STYLE}`;
+    game.ctx.fillStyle = "#fff";
+    game.ctx.textAlign = "left";
+    game.ctx.fillText(header, 50, 100);
+
+    game.ctx.font = `11px ${FONT_STYLE}`;
+    game.ctx.fillText(p1, 50, 200, 600);
+    game.ctx.fillText(p2, 50, 250, 600);
+    game.ctx.fillText(p3, 50, 300, 600);
+    game.ctx.fillText(p4, 50, 350, 600);
+    game.ctx.fillText(p5, 50, 400, 600);
+
+    game.drawButton("Start Level");
+    game.gameState.shouldStartLevel = true;
+  }
+
+  start() {
+    this.interval = setInterval(drawLevelOne, 10);
+  }
+
+  drawBackground() {
+    game.ctx.drawImage(
+      game.images.levelOneInGame,
+      0,
+      0,
+      game.width,
+      game.height
+    );
+  }
+
+  countdownToStart() {
+    let count = 3 - Math.floor(game.frames / 100);
+
+    if (count < -2) return;
+
+    game.ctx.font = `28px ${FONT_STYLE}`;
+    game.ctx.fillStyle = "red";
+    if (count === 0 && !game.didLevelStart) {
+      game.didLevelStart = true;
+      game.abortController = new AbortController();
+      const signal = game.abortController.signal;
+
+      game.ctx.fillStyle = "green";
+      game.ctx.fillText("GO!", game.width / 2, 240);
+
+      document.addEventListener(
+        "keydown",
+        (event) => {
+          switch (event.keyCode) {
+            case 38:
+              playerLevelOne.moveUp();
+              break;
+            case 40:
+              playerLevelOne.moveDown();
+              break;
+            case 37:
+              playerLevelOne.moveLeft();
+              break;
+            case 39:
+              playerLevelOne.moveRight();
+              break;
+          }
+        },
+        { signal: signal }
+      );
+    } else if (count == 0 && game.didLevelStart) {
+      game.ctx.fillStyle = "green";
+      game.ctx.fillText("GO!", game.width / 2, 240);
+    } else if (count > 0) {
+      game.ctx.fillText(`${count}`, game.width / 2, 240);
+    }
+  }
+
+  updateVehiclePos() {
+    const startingXPos = game.width;
+    const rowFourStartingYPos = 400;
+    const rowThreeStartingYPos = 290;
+    const rowTwoStartingYPos = 180;
+    const rowOneStartingYpos = 65;
+
+    if (game.frames % 300 === 0) {
+      vehicles.push(new Vehicle(startingXPos, rowOneStartingYpos, 150, 75, 1));
+    }
+
+    if (game.frames % 200 === 0) {
+      vehicles.push(new Vehicle(startingXPos, rowTwoStartingYPos, 150, 75, 2));
+
+      vehicles.push(
+        new Vehicle(startingXPos, rowThreeStartingYPos, 150, 75, 3)
+      );
+
+      vehicles.push(new Vehicle(startingXPos, rowFourStartingYPos, 150, 75, 6));
+    }
+
+    for (let i = 0; i < vehicles.length; i++) {
+      vehicles[i].xPos -= vehicles[i].speed;
+      vehicles[i].drawVehicle();
+    }
+  }
+
+  collisionCheck(vehicle) {
+    return !(
+      playerLevelOne.top() > vehicle.bottom() ||
+      playerLevelOne.bottom() < vehicle.top() ||
+      playerLevelOne.left() > vehicle.right() ||
+      (playerLevelOne.left() < vehicle.left() &&
+        playerLevelOne.right() < vehicle.left()) ||
+      playerLevelOne.right() < vehicle.left()
+    );
+  }
+
+  stop() {
+    clearInterval(this.interval);
+  }
+
+  loadGameOverScreen() {
+    this.reset();
+    this.removeKeyDownEventListener();
+
+    game.clearGameArea();
+    game.gameState.levelToLoad = 0;
+    game.gameState.shouldStartLevel = false;
+
+    game.ctx.drawImage(
+      game.images.levelOneGameOver,
+      0,
+      0,
+      game.width,
+      game.height
+    );
+
+    game.ctx.fillStyle = "rgba(0,0,0,0.7)";
+    game.ctx.fillRect(0, 0, game.width, game.height);
+
+    const header = "Game Over...";
+    const p1 = "you were hit by a bus.";
+    const p2 = "You'll need some time to recover at the hospital.";
+    const p3 = "But don't worry. Another weekend you can always...";
+
+    game.ctx.font = `32px ${FONT_STYLE}`;
+    game.ctx.fillStyle = "red";
+    game.ctx.textAlign = "left";
+    game.ctx.fillText(header, 50, 100);
+
+    game.ctx.fillStyle = "white";
+    game.ctx.font = `16px ${FONT_STYLE}`;
+    game.ctx.fillText(p1, 50, 200, 600);
+    game.ctx.fillText(p2, 50, 250, 600);
+    game.ctx.fillText(p3, 50, 300, 600);
+
+    game.drawButton("Try Again");
+  }
+
+  reset() {
+    playerLevelOne = new Player(330, 485, 40, 60);
+
+    vehicles = [];
+
+    game.frames = 0;
+
+    game.didLevelStart = false;
+  }
+
+  victoryCheck(playerYPos) {
+    if (playerYPos < 30) {
+      this.stop();
+      this.loadVictoryScreen();
+    }
+  }
+
+  loadVictoryScreen() {
+    game.clearGameArea();
+    this.removeKeyDownEventListener();
+
+    game.gameState.levelToLoad = 2;
+    game.gameState.shouldStartLevel = false;
+
+    game.ctx.drawImage(
+      game.images.levelOneVictory,
+      0,
+      0,
+      game.width,
+      game.height
+    );
+
+    game.ctx.fillStyle = "rgba(0,0,0,0.7)";
+    game.ctx.fillRect(0, 0, game.width, game.height);
+
+    const header = "Success!";
+    const p1 = "You made it safely to the other side.";
+    const p2 = "Time to have some beer with your friends.";
+
+    game.ctx.font = `36px ${FONT_STYLE}`;
+    game.ctx.fillStyle = "green";
+    game.ctx.textAlign = "left";
+    game.ctx.fillText(header, 50, 100);
+
+    game.ctx.font = `18px ${FONT_STYLE}`;
+    game.ctx.fillStyle = "white";
+    game.ctx.fillText(p1, 50, 200, 600);
+    game.ctx.fillText(p2, 50, 250, 600);
+
+    game.drawButton("Enter Bar");
+  }
+
+  removeKeyDownEventListener() {
+    game.abortController.abort();
+  }
+}
+
+class LevelTwo {
+  constructor() {
+    this.levelTwoScore = 0;
+  }
+
+  load() {
+    game.clearGameArea();
+
+    game.gameState.levelToStart = 2;
+    game.frames = 0;
+    game.didLevelStart = false;
+
+    game.ctx.drawImage(game.images.levelTwo, 0, 0, game.width, game.height);
+
+    game.ctx.fillStyle = "rgba(0,0,0,0.7)";
+    game.ctx.fillRect(0, 0, game.width, game.height);
+
+    const header = "Inside the bar...";
+    const p1 = "you're very thirsty and begin ordering beer.";
+    const p2 = "You tell the bartender to just keep them coming.";
+    const p3 =
+      "Drink as much beer as you can before the timer runs out by collecting the falling bottles.";
+    const p4 =
+      "Control your character by using the left and right keyboard buttons.";
+    const p5 = "Begin playing by clicking the 'Start Level' button.";
+
+    game.ctx.font = `36px ${FONT_STYLE}`;
+    game.ctx.fillStyle = "#fff";
+    game.ctx.textAlign = "left";
+    game.ctx.fillText(header, 50, 100);
+
+    game.ctx.font = `12px ${FONT_STYLE}`;
+    game.ctx.fillText(p1, 50, 200, 600);
+    game.ctx.fillText(p2, 50, 250, 600);
+    game.ctx.fillText(p3, 50, 300, 600);
+    game.ctx.fillText(p4, 50, 350, 600);
+    game.ctx.fillText(p5, 50, 400, 600);
+
+    game.drawButton("Start Level");
+    game.gameState.shouldStartLevel = true;
+  }
+
+  start() {
+    this.interval = setInterval(drawLevelTwo, 10);
+  }
+
+  drawBackground() {
+    game.ctx.drawImage(
+      game.images.levelTwoInGame,
+      0,
+      0,
+      game.width,
+      game.height
+    );
+  }
+
+  countdownToStart() {
+    let count = 3 - Math.floor(game.frames / 100);
+
+    if (count < -2) return;
+
+    game.ctx.font = `28px ${FONT_STYLE}`;
+    game.ctx.fillStyle = "red";
+
+    if (count === 0 && !game.didLevelStart) {
+      game.didLevelStart = true;
+      game.abortController = new AbortController();
+      const signal = game.abortController.signal;
+
+      game.ctx.fillstyle = "green";
+      game.ctx.fillText("GO!", 320, 240);
+
+      document.addEventListener(
+        "keydown",
+        (event) => {
+          switch (event.keyCode) {
+            case 37:
+              playerLevelTwo.moveLeft();
+              break;
+            case 39:
+              playerLevelTwo.moveRight();
+              break;
+          }
+        },
+        { signal: signal }
+      );
+    } else if (count == 0 && game.didLevelStart) {
+      game.ctx.fillStyle = "green";
+      game.ctx.fillText("GO!", 320, 240);
+    } else if (count > 0) {
+      game.ctx.fillStyle = "red";
+      game.ctx.fillText(`${count}`, 320, 240);
+    }
+  }
+
+  countdownToGameOver() {
+    let count = 13 - Math.floor(game.frames / 100);
+
+    if (!game.didLevelStart) return;
+
+    if (count === 0) {
+      this.stop();
+      this.loadGameOverScreen();
+      return;
+    }
+
+    game.ctx.font = `20px ${FONT_STYLE}`;
+
+    if (count > 3) {
+      game.ctx.fillStyle = "white";
+    } else {
+      game.ctx.fillStyle = "red";
+    }
+    game.ctx.fillText(`Timer: ${count}`, 90, 30);
+  }
+
+  updateBottlePos() {
+    if (!game.didLevelStart) return;
+    const yPosition = 0;
+
+    const minX = 40;
+    const maxX = 680;
+
+    const xPosition = Math.floor(Math.random() * (maxX - minX + 1) + minX);
+
+    if (game.frames % 50 === 0) {
+      bottles.push(new Bottle(xPosition, yPosition, 20, 70));
+    }
+
+    for (let i = 0; i < bottles.length; i++) {
+      bottles[i].yPos += 4;
+      bottles[i].drawBottle();
+    }
+  }
+
+  updateScore() {
+    const score = this.levelTwoScore;
+
+    game.ctx.font = `20px ${FONT_STYLE}`;
+    game.ctx.fillStyle = "white";
+    game.ctx.fillText(`Score: ${score}`, 590, 30);
+  }
+
+  stop() {
+    clearInterval(this.interval);
+  }
+
+  loadGameOverScreen() {
+    game.clearGameArea();
+    levelTwo.removeKeyDownEventListener();
+
+    game.gameState.levelToLoad = 0;
+    game.gameState.shouldStartLevel = false;
+
+    game.ctx.drawImage(
+      game.images.levelTwoGameOver,
+      0,
+      0,
+      game.width,
+      game.height
+    );
+
+    game.ctx.fillStyle = "rgba(0,0,0,0.7)";
+    game.ctx.fillRect(0, 0, game.width, game.height);
+
+    const header = "Well done!";
+    const p1 = `You drank ${this.levelTwoScore} beers...`;
+    const p2 = "...wait..looks like it was a bit too much.";
+    const p3 = "You pass out and your friends have to take you home.";
+    const p4 = "But don't worry. Next weekend you can always...";
+
+    game.ctx.font = `36px ${FONT_STYLE}`;
+    game.ctx.fillStyle = "green";
+    game.ctx.textAlign = "left";
+    game.ctx.fillText(header, 50, 100);
+
+    game.ctx.font = `13px ${FONT_STYLE}`;
+    game.ctx.fillStyle = "white";
+    game.ctx.fillText(p1, 50, 200, 600);
+    game.ctx.fillText(p2, 50, 250, 600);
+    game.ctx.fillText(p3, 50, 300, 600);
+    game.ctx.fillText(p4, 50, 350, 600);
+
+    this.resetGame();
+    game.drawButton("Try Again");
+  }
+
+  removeKeyDownEventListener() {
+    game.abortController.abort();
+  }
+
+  resetGame() {
+    playerLevelOne = new Player(330, 485, 40, 60);
+
+    vehicles = [];
+
+    playerLevelTwo = new Player(275, 340, 100, 200);
+
+    bottles = [];
+
+    this.levelTwoScore = 0;
+
+    game.frames = 0;
+
+    game.didLevelStart = false;
+  }
+}
+
 const game = new Game();
+const startScreen = new StartScreen();
+const levelOne = new LevelOne();
+const levelTwo = new LevelTwo();
 
 class GameObject {
   constructor(xPos, yPos, width, height) {
@@ -731,8 +733,6 @@ class Vehicle extends GameObject {
   }
 }
 
-const ctx = game.ctx;
-
 const playerLevelOneImg = new Image();
 playerLevelOneImg.src = "./images/player-level-one.png";
 
@@ -761,23 +761,23 @@ class Bottle extends GameObject {
 
 const checkLevelOneCollision = (vehicleArray) => {
   const collided = vehicleArray.some((vehicle) => {
-    return game.levelOneCollisionCheck(vehicle);
+    return levelOne.collisionCheck(vehicle);
   });
   if (collided) {
-    game.stopLevelOne();
-    game.loadLevelOneGameOverScreen();
+    levelOne.stop();
+    levelOne.loadGameOverScreen();
   }
 };
 
 const drawLevelOne = () => {
   game.updateFrames();
   game.clearGameArea();
-  game.drawLevelOneBackground();
+  levelOne.drawBackground();
   playerLevelOne.drawPlayer(playerLevelOneImg);
-  game.updateLevelOneVehiclePos();
-  game.countdownToStartLevelOne();
+  levelOne.updateVehiclePos();
+  levelOne.countdownToStart();
   checkLevelOneCollision(vehicles);
-  game.levelOneVictoryCheck(playerLevelOne.yPos);
+  levelOne.victoryCheck(playerLevelOne.yPos);
 };
 
 const checkLevelTwoCollision = (bottlesArray) => {
@@ -790,7 +790,7 @@ const checkLevelTwoCollision = (bottlesArray) => {
         playerLevelTwo.right() < bottlesArray[i].left()
       )
     ) {
-      game.levelTwoScore += 1;
+      levelTwo.levelTwoScore += 1;
       bottlesArray.splice(i, 1);
     }
   }
@@ -799,13 +799,13 @@ const checkLevelTwoCollision = (bottlesArray) => {
 const drawLevelTwo = () => {
   game.updateFrames();
   game.clearGameArea();
-  game.drawLevelTwoBackground();
+  levelTwo.drawBackground();
   playerLevelTwo.drawPlayer(playerLevelTwoImg);
-  game.updateLevelTwoBottlePos();
-  game.countdownToStartLevelTwo();
+  levelTwo.updateBottlePos();
+  levelTwo.countdownToStart();
   checkLevelTwoCollision(bottles);
-  game.updateLevelTwoScore();
-  game.countdownToGameOverLevelTwo();
+  levelTwo.updateScore();
+  levelTwo.countdownToGameOver();
 };
 
 window.addEventListener("load", () => {
