@@ -54,7 +54,7 @@ class Game {
   drawButton(text) {
     const rectangle = new Path2D();
     const rectangleX = this.width / 3;
-    const rectangleY = 450;
+    const rectangleY = 400;
     const rectangleWidth = 200;
     const rectangleHeight = 50;
     rectangle.rect(rectangleX, rectangleY, rectangleWidth, rectangleHeight);
@@ -72,7 +72,7 @@ class Game {
     this.ctx.font = `13px ${FONT_STYLE}`;
     this.ctx.fillStyle = "white";
     this.ctx.textAlign = "center";
-    this.ctx.fillText(text, 335, 483);
+    this.ctx.fillText(text, 335, 433);
 
     this.setUpEventListener(button, buttonDimensions);
   }
@@ -195,13 +195,13 @@ class StartScreen {
     game.ctx.font = `28px ${FONT_STYLE}`;
     game.ctx.fillStyle = "#fff";
     game.ctx.textAlign = "left";
-    game.ctx.fillText(header, 50, 100);
+    game.ctx.fillText(header, 50, 75);
 
     game.ctx.font = `11px ${FONT_STYLE}`;
-    game.ctx.fillText(p1, 50, 200);
-    game.ctx.fillText(p2, 50, 250);
-    game.ctx.fillText(p3, 50, 300);
-    game.ctx.fillText(p4, 50, 350);
+    game.ctx.fillText(p1, 50, 150);
+    game.ctx.fillText(p2, 50, 200);
+    game.ctx.fillText(p3, 50, 250);
+    game.ctx.fillText(p4, 50, 300);
 
     game.drawButton("Start Game");
   }
@@ -219,10 +219,9 @@ class LevelOne {
     game.ctx.fillRect(0, 0, game.width, game.height);
 
     const header = "On the way to the bar...";
-    const p1 = "you decide to not find the nearest crosswalk.";
-    const p2 = "Instead, you opt for crossing the 4-lane road.";
-    const p3 =
-      "Get to the other side of the road as quickly as possible without getting hit by a bus.";
+    const p1 = "you decide to take a shortcut across a 4-lane road.";
+    const p2 = "Get to the other side of the road as quickly as possible";
+    const p3 = "without getting hit by a bus.";
     const p4 =
       "Control your character by using the up, down, left, and right keyboard buttons.";
     const p5 = "Begin playing by clicking the 'Start Level' button.";
@@ -230,14 +229,14 @@ class LevelOne {
     game.ctx.font = `26px ${FONT_STYLE}`;
     game.ctx.fillStyle = "#fff";
     game.ctx.textAlign = "left";
-    game.ctx.fillText(header, 50, 100);
+    game.ctx.fillText(header, 50, 75);
 
     game.ctx.font = `11px ${FONT_STYLE}`;
-    game.ctx.fillText(p1, 50, 200, 600);
-    game.ctx.fillText(p2, 50, 250, 600);
-    game.ctx.fillText(p3, 50, 300, 600);
-    game.ctx.fillText(p4, 50, 350, 600);
-    game.ctx.fillText(p5, 50, 400, 600);
+    game.ctx.fillText(p1, 50, 150, 600);
+    game.ctx.fillText(p2, 50, 200, 600);
+    game.ctx.fillText(p3, 50, 250, 600);
+    game.ctx.fillText(p4, 50, 300, 600);
+    game.ctx.fillText(p5, 50, 350, 600);
 
     game.drawButton("Start Level");
     game.gameState.shouldStartLevel = true;
@@ -366,16 +365,16 @@ class LevelOne {
     const p2 = "You'll need some time to recover at the hospital.";
     const p3 = "But don't worry. Another weekend you can always...";
 
-    game.ctx.font = `32px ${FONT_STYLE}`;
+    game.ctx.font = `28px ${FONT_STYLE}`;
     game.ctx.fillStyle = "red";
     game.ctx.textAlign = "left";
-    game.ctx.fillText(header, 50, 100);
+    game.ctx.fillText(header, 50, 75);
 
     game.ctx.fillStyle = "white";
-    game.ctx.font = `16px ${FONT_STYLE}`;
-    game.ctx.fillText(p1, 50, 200, 600);
-    game.ctx.fillText(p2, 50, 250, 600);
-    game.ctx.fillText(p3, 50, 300, 600);
+    game.ctx.font = `11px ${FONT_STYLE}`;
+    game.ctx.fillText(p1, 50, 150, 600);
+    game.ctx.fillText(p2, 50, 200, 600);
+    game.ctx.fillText(p3, 50, 250, 600);
 
     game.drawButton("Try Again");
   }
@@ -419,15 +418,15 @@ class LevelOne {
     const p1 = "You made it safely to the other side.";
     const p2 = "Time to have some beer with your friends.";
 
-    game.ctx.font = `36px ${FONT_STYLE}`;
+    game.ctx.font = `28px ${FONT_STYLE}`;
     game.ctx.fillStyle = "green";
     game.ctx.textAlign = "left";
-    game.ctx.fillText(header, 50, 100);
+    game.ctx.fillText(header, 50, 75);
 
-    game.ctx.font = `18px ${FONT_STYLE}`;
+    game.ctx.font = `11px ${FONT_STYLE}`;
     game.ctx.fillStyle = "white";
-    game.ctx.fillText(p1, 50, 200, 600);
-    game.ctx.fillText(p2, 50, 250, 600);
+    game.ctx.fillText(p1, 50, 150, 600);
+    game.ctx.fillText(p2, 50, 200, 600);
 
     game.drawButton("Enter Bar");
   }
@@ -456,9 +455,8 @@ class LevelTwo {
 
     const header = "Inside the bar...";
     const p1 = "you're very thirsty and begin ordering beer.";
-    const p2 = "You tell the bartender to just keep them coming.";
-    const p3 =
-      "Drink as much beer as you can before the timer runs out by collecting the falling bottles.";
+    const p2 = "Drink as much beer as you can before the timer runs out";
+    const p3 = "by collecting the falling bottles.";
     const p4 =
       "Control your character by using the left and right keyboard buttons.";
     const p5 = "Begin playing by clicking the 'Start Level' button.";
@@ -466,14 +464,14 @@ class LevelTwo {
     game.ctx.font = `36px ${FONT_STYLE}`;
     game.ctx.fillStyle = "#fff";
     game.ctx.textAlign = "left";
-    game.ctx.fillText(header, 50, 100);
+    game.ctx.fillText(header, 50, 75);
 
     game.ctx.font = `12px ${FONT_STYLE}`;
-    game.ctx.fillText(p1, 50, 200, 600);
-    game.ctx.fillText(p2, 50, 250, 600);
-    game.ctx.fillText(p3, 50, 300, 600);
-    game.ctx.fillText(p4, 50, 350, 600);
-    game.ctx.fillText(p5, 50, 400, 600);
+    game.ctx.fillText(p1, 50, 150, 600);
+    game.ctx.fillText(p2, 50, 200, 600);
+    game.ctx.fillText(p3, 50, 250, 600);
+    game.ctx.fillText(p4, 50, 300, 600);
+    game.ctx.fillText(p5, 50, 350, 600);
 
     game.drawButton("Start Level");
     game.gameState.shouldStartLevel = true;
@@ -586,7 +584,7 @@ class LevelTwo {
 
   loadGameOverScreen() {
     game.clearGameArea();
-    levelTwo.removeKeyDownEventListener();
+    this.removeKeyDownEventListener();
 
     game.gameState.levelToLoad = 0;
     game.gameState.shouldStartLevel = false;
@@ -608,17 +606,17 @@ class LevelTwo {
     const p3 = "You pass out and your friends have to take you home.";
     const p4 = "But don't worry. Next weekend you can always...";
 
-    game.ctx.font = `36px ${FONT_STYLE}`;
+    game.ctx.font = `28px ${FONT_STYLE}`;
     game.ctx.fillStyle = "green";
     game.ctx.textAlign = "left";
-    game.ctx.fillText(header, 50, 100);
+    game.ctx.fillText(header, 50, 75);
 
-    game.ctx.font = `13px ${FONT_STYLE}`;
+    game.ctx.font = `11px ${FONT_STYLE}`;
     game.ctx.fillStyle = "white";
-    game.ctx.fillText(p1, 50, 200, 600);
-    game.ctx.fillText(p2, 50, 250, 600);
-    game.ctx.fillText(p3, 50, 300, 600);
-    game.ctx.fillText(p4, 50, 350, 600);
+    game.ctx.fillText(p1, 50, 150, 600);
+    game.ctx.fillText(p2, 50, 200, 600);
+    game.ctx.fillText(p3, 50, 250, 600);
+    game.ctx.fillText(p4, 50, 300, 600);
 
     this.resetGame();
     game.drawButton("Try Again");
