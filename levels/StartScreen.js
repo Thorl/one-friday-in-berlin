@@ -1,5 +1,5 @@
 import { game } from "../app.js";
-import { FONT_STYLE } from "../app.js";
+import { FONT_STYLE } from "../utils/fonts.js";
 
 class StartScreen {
   load() {
