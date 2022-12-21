@@ -37,6 +37,7 @@ export class Player extends GameObject {
   }
 }
 
-export let playerLevelOne = new Player(330, 485, 40, 60);
-
-export let playerLevelTwo = new Player(275, 340, 100, 200);
+export const player = {
+  levelOne: new Player(330, 485, 40, 60),
+  levelTwo: new Player(275, 340, 100, 200),
+};

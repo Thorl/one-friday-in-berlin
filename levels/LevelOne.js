@@ -1,6 +1,6 @@
 import { FONT_STYLE } from "../utils/fonts.js";
 import { Player } from "../utils/player.js";
-import { playerLevelOne } from "../utils/player.js";
+import { player } from "../utils/player.js";
 import { Vehicle } from "../utils/vehicle.js";
 import { game } from "../app.js";
 
@@ -74,16 +74,16 @@ class LevelOne {
         (event) => {
           switch (event.keyCode) {
             case 38:
-              playerLevelOne.moveUp();
+              player.levelOne.moveUp();
               break;
             case 40:
-              playerLevelOne.moveDown();
+              player.levelOne.moveDown();
               break;
             case 37:
-              playerLevelOne.moveLeft();
+              player.levelOne.moveLeft();
               break;
             case 39:
-              playerLevelOne.moveRight();
+              player.levelOne.moveRight();
               break;
           }
         },
@@ -105,33 +105,39 @@ class LevelOne {
     const rowOneStartingYpos = 65;
 
     if (game.frames % 300 === 0) {
-      vehicles.push(new Vehicle(startingXPos, rowOneStartingYpos, 150, 75, 1));
+      vehicles.bus.push(
+        new Vehicle(startingXPos, rowOneStartingYpos, 150, 75, 1)
+      );
     }
 
     if (game.frames % 200 === 0) {
-      vehicles.push(new Vehicle(startingXPos, rowTwoStartingYPos, 150, 75, 2));
+      vehicles.bus.push(
+        new Vehicle(startingXPos, rowTwoStartingYPos, 150, 75, 2)
+      );
 
-      vehicles.push(
+      vehicles.bus.push(
         new Vehicle(startingXPos, rowThreeStartingYPos, 150, 75, 3)
       );
 
-      vehicles.push(new Vehicle(startingXPos, rowFourStartingYPos, 150, 75, 6));
+      vehicles.bus.push(
+        new Vehicle(startingXPos, rowFourStartingYPos, 150, 75, 6)
+      );
     }
 
-    for (let i = 0; i < vehicles.length; i++) {
-      vehicles[i].xPos -= vehicles[i].speed;
-      vehicles[i].drawVehicle();
+    for (let i = 0; i < vehicles.bus.length; i++) {
+      vehicles.bus[i].xPos -= vehicles.bus[i].speed;
+      vehicles.bus[i].drawVehicle();
     }
   }
 
   collisionCheck(vehicle) {
     return !(
-      playerLevelOne.top() > vehicle.bottom() ||
-      playerLevelOne.bottom() < vehicle.top() ||
-      playerLevelOne.left() > vehicle.right() ||
-      (playerLevelOne.left() < vehicle.left() &&
-        playerLevelOne.right() < vehicle.left()) ||
-      playerLevelOne.right() < vehicle.left()
+      player.levelOne.top() > vehicle.bottom() ||
+      player.levelOne.bottom() < vehicle.top() ||
+      player.levelOne.left() > vehicle.right() ||
+      (player.levelOne.left() < vehicle.left() &&
+        player.levelOne.right() < vehicle.left()) ||
+      player.levelOne.right() < vehicle.left()
     );
   }
 
@@ -178,9 +184,9 @@ class LevelOne {
   }
 
   reset() {
-    playerLevelOne = new Player(330, 485, 40, 60);
+    player.levelOne = new Player(330, 485, 40, 60);
 
-    vehicles = [];
+    vehicles.bus = [];
 
     game.frames = 0;
 
@@ -234,7 +240,7 @@ class LevelOne {
   }
 }
 
-let vehicles = [];
+export let vehicles = { bus: [] };
 
 const checkLevelOneCollision = (vehicleArray) => {
   const collided = vehicleArray.some((vehicle) => {
@@ -250,11 +256,11 @@ const drawLevelOne = () => {
   game.updateFrames();
   game.clearGameArea();
   levelOne.drawBackground();
-  playerLevelOne.drawPlayer(game.images.playerLevelOne);
+  player.levelOne.drawPlayer(game.images.playerLevelOne);
   levelOne.updateVehiclePos();
   levelOne.countdownToStart();
-  checkLevelOneCollision(vehicles);
-  levelOne.victoryCheck(playerLevelOne.yPos);
+  checkLevelOneCollision(vehicles.bus);
+  levelOne.victoryCheck(player.levelOne.yPos);
 };
 
 export const levelOne = new LevelOne();
