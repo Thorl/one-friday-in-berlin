@@ -70,8 +70,8 @@ class LevelOne {
     gameArea.ctx.fillStyle = "red";
     if (count === 0 && !game.didLevelStart) {
       game.didLevelStart = true;
-      game.abortController = new AbortController();
-      const signal = game.abortController.signal;
+      gameArea.abortController = new AbortController();
+      const signal = gameArea.abortController.signal;
 
       gameArea.ctx.fillStyle = "green";
       gameArea.ctx.fillText("GO!", gameArea.width / 2, 240);
@@ -243,7 +243,7 @@ class LevelOne {
   }
 
   removeKeyDownEventListener() {
-    game.abortController.abort();
+    gameArea.abortController.abort();
   }
 }
 

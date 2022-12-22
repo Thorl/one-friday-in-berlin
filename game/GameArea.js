@@ -7,6 +7,7 @@ class GameArea {
     this.ctx = canvas.getContext("2d");
     this.width = canvas.width;
     this.height = canvas.height;
+    this.abortController;
   }
 
   clearGameArea() {
@@ -47,8 +48,8 @@ class GameArea {
       buttonDimensions.rectangleHeight
     );
 
-    game.abortController = new AbortController();
-    const signal = game.abortController.signal;
+    this.abortController = new AbortController();
+    const signal = this.abortController.signal;
 
     this.canvas.addEventListener(
       "click",
@@ -60,10 +61,10 @@ class GameArea {
         );
 
         if (isMouseOnBtn && !game.gameState.shouldStartLevel) {
-          game.abortController.abort();
+          this.abortController.abort();
           game.loadLevel(game.gameState.levelToLoad);
         } else if (isMouseOnBtn && game.gameState.shouldStartLevel) {
-          game.abortController.abort();
+          this.abortController.abort();
           game.startLevel(game.gameState.levelToStart);
         }
       },

@@ -78,8 +78,8 @@ class LevelTwo {
 
     if (count === 0 && !game.didLevelStart) {
       game.didLevelStart = true;
-      game.abortController = new AbortController();
-      const signal = game.abortController.signal;
+      gameArea.abortController = new AbortController();
+      const signal = gameArea.abortController.signal;
 
       gameArea.ctx.fillstyle = "green";
       gameArea.ctx.fillText("GO!", 320, 240);
@@ -200,7 +200,7 @@ class LevelTwo {
   }
 
   removeKeyDownEventListener() {
-    game.abortController.abort();
+    gameArea.abortController.abort();
   }
 
   resetGame() {

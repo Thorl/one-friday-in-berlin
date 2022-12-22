@@ -1,7 +1,6 @@
 /** @type {{HTMLCanvasElement}} */
 
 import { FONT_STYLE } from "./utils/fonts.js";
-import { gameArea } from "./game/GameArea.js";
 import { startScreen } from "./levels/StartScreen.js";
 import { levelOne } from "./levels/LevelOne.js";
 import { levelTwo } from "./levels/LevelTwo.js";
@@ -15,7 +14,6 @@ class Game {
     };
     this.didLevelStart = false;
     this.frames = 0;
-    this.abortController;
     this.loadedImageCount = 0;
     this.imageNames = [
       "startScreen",
