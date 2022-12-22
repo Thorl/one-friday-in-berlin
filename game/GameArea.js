@@ -1,5 +1,6 @@
 import { FONT_STYLE } from "../utils/fonts.js";
 import { game } from "../app.js";
+import { gameState } from "./GameState.js";
 
 class GameArea {
   constructor() {
@@ -60,12 +61,12 @@ class GameArea {
           event.offsetY
         );
 
-        if (isMouseOnBtn && !game.gameState.shouldStartLevel) {
+        if (isMouseOnBtn && !gameState.shouldStartLevel) {
           this.abortController.abort();
-          game.loadLevel(game.gameState.levelToLoad);
-        } else if (isMouseOnBtn && game.gameState.shouldStartLevel) {
+          game.loadLevel(gameState.levelToLoad);
+        } else if (isMouseOnBtn && gameState.shouldStartLevel) {
           this.abortController.abort();
-          game.startLevel(game.gameState.levelToStart);
+          game.startLevel(gameState.levelToStart);
         }
       },
       { signal: signal }

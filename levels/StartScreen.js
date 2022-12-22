@@ -1,12 +1,13 @@
 import { game } from "../app.js";
 import { gameArea } from "../game/GameArea.js";
+import { gameState } from "../game/GameState.js";
 import { FONT_STYLE } from "../utils/fonts.js";
 
 class StartScreen {
   load() {
     gameArea.clearGameArea();
-    game.gameState.levelToLoad = 1;
-    game.gameState.shouldStartLevel = false;
+    gameState.levelToLoad = 1;
+    gameState.shouldStartLevel = false;
 
     gameArea.ctx.drawImage(
       game.images.startScreen,

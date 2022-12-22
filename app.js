@@ -1,19 +1,11 @@
 /** @type {{HTMLCanvasElement}} */
 
-import { FONT_STYLE } from "./utils/fonts.js";
 import { startScreen } from "./levels/StartScreen.js";
 import { levelOne } from "./levels/LevelOne.js";
 import { levelTwo } from "./levels/LevelTwo.js";
 
 class Game {
   constructor() {
-    this.gameState = {
-      levelToLoad: 1,
-      levelToStart: 1,
-      shouldStartLevel: false,
-    };
-    this.didLevelStart = false;
-    this.frames = 0;
     this.loadedImageCount = 0;
     this.imageNames = [
       "startScreen",
@@ -46,12 +38,6 @@ class Game {
     this.images = {};
   }
 
-  /* Utilities */
-
-  updateFrames() {
-    this.frames += 1;
-  }
-
   loadLevel(levelToLoad) {
     switch (levelToLoad) {
       case 0:
@@ -76,7 +62,7 @@ class Game {
     }
   }
 
-  loadImages(imageSrcArray, currentIndex) {
+  loadAssets(imageSrcArray, currentIndex) {
     if (imageSrcArray.length === currentIndex) return;
 
     let currentImage = new Image();
@@ -92,18 +78,18 @@ class Game {
       }
 
       ++currentIndex;
-      this.loadImages(imageSrcArray, currentIndex);
+      this.loadAssets(imageSrcArray, currentIndex);
       return;
     };
   }
 
   loadFonts() {
-    let font = new FontFace(
+    let retroFont = new FontFace(
       "retroGame",
       "url(./fonts/PressStart2P-Regular.ttf)"
     );
 
-    font.load().then((loadedFont) => {
+    retroFont.load().then((loadedFont) => {
       document.fonts.add(loadedFont);
       startScreen.load();
     });
@@ -113,5 +99,5 @@ class Game {
 export const game = new Game();
 
 window.addEventListener("load", () => {
-  game.loadImages(game.imageSrcs, 0);
+  game.loadAssets(game.imageSrcs, 0);
 });

@@ -1,6 +1,7 @@
 import { FONT_STYLE } from "../utils/fonts.js";
 import { game } from "../app.js";
 import { gameArea } from "../game/GameArea.js";
+import { gameState } from "../game/GameState.js";
 import { Player } from "../utils/player.js";
 import { player } from "../utils/player.js";
 import { Bottle } from "../utils/bottle.js";
@@ -14,9 +15,9 @@ class LevelTwo {
   load() {
     gameArea.clearGameArea();
 
-    game.gameState.levelToStart = 2;
-    game.frames = 0;
-    game.didLevelStart = false;
+    gameState.levelToStart = 2;
+    gameState.frames = 0;
+    gameState.didLevelStart = false;
 
     gameArea.ctx.drawImage(
       game.images.levelTwo,
@@ -51,7 +52,7 @@ class LevelTwo {
     gameArea.ctx.fillText(p5, 50, 400, 600);
 
     gameArea.drawButton("Start Level");
-    game.gameState.shouldStartLevel = true;
+    gameState.shouldStartLevel = true;
   }
 
   start() {
@@ -69,15 +70,15 @@ class LevelTwo {
   }
 
   countdownToStart() {
-    let count = 3 - Math.floor(game.frames / 100);
+    let count = 3 - Math.floor(gameState.frames / 100);
 
     if (count < -2) return;
 
     gameArea.ctx.font = `28px ${FONT_STYLE}`;
     gameArea.ctx.fillStyle = "red";
 
-    if (count === 0 && !game.didLevelStart) {
-      game.didLevelStart = true;
+    if (count === 0 && !gameState.didLevelStart) {
+      gameState.didLevelStart = true;
       gameArea.abortController = new AbortController();
       const signal = gameArea.abortController.signal;
 
@@ -98,7 +99,7 @@ class LevelTwo {
         },
         { signal: signal }
       );
-    } else if (count == 0 && game.didLevelStart) {
+    } else if (count == 0 && gameState.didLevelStart) {
       gameArea.ctx.fillStyle = "green";
       gameArea.ctx.fillText("GO!", 320, 240);
     } else if (count > 0) {
@@ -108,9 +109,9 @@ class LevelTwo {
   }
 
   countdownToGameOver() {
-    let count = 13 - Math.floor(game.frames / 100);
+    let count = 13 - Math.floor(gameState.frames / 100);
 
-    if (!game.didLevelStart) return;
+    if (!gameState.didLevelStart) return;
 
     if (count === 0) {
       this.stop();
@@ -129,7 +130,7 @@ class LevelTwo {
   }
 
   updateBottlePos() {
-    if (!game.didLevelStart) return;
+    if (!gameState.didLevelStart) return;
     const yPosition = 0;
 
     const minX = 40;
@@ -137,7 +138,7 @@ class LevelTwo {
 
     const xPosition = Math.floor(Math.random() * (maxX - minX + 1) + minX);
 
-    if (game.frames % 50 === 0) {
+    if (gameState.frames % 50 === 0) {
       bottles.push(new Bottle(xPosition, yPosition, 20, 70));
     }
 
@@ -163,8 +164,8 @@ class LevelTwo {
     gameArea.clearGameArea();
     this.removeKeyDownEventListener();
 
-    game.gameState.levelToLoad = 0;
-    game.gameState.shouldStartLevel = false;
+    gameState.levelToLoad = 0;
+    gameState.shouldStartLevel = false;
 
     gameArea.ctx.drawImage(
       game.images.levelTwoGameOver,
@@ -214,9 +215,9 @@ class LevelTwo {
 
     this.levelTwoScore = 0;
 
-    game.frames = 0;
+    gameState.frames = 0;
 
-    game.didLevelStart = false;
+    gameState.didLevelStart = false;
   }
 }
 
@@ -239,7 +240,7 @@ const checkLevelTwoCollision = (bottlesArray) => {
 };
 
 const drawLevelTwo = () => {
-  game.updateFrames();
+  gameState.updateFrames();
   gameArea.clearGameArea();
   levelTwo.drawBackground();
   player.levelTwo.drawPlayer(game.images.playerLevelTwo);

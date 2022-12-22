@@ -4,12 +4,13 @@ import { player } from "../utils/player.js";
 import { Vehicle } from "../utils/vehicle.js";
 import { game } from "../app.js";
 import { gameArea } from "../game/GameArea.js";
+import { gameState } from "../game/GameState.js";
 
 class LevelOne {
   load() {
     gameArea.clearGameArea();
 
-    game.gameState.levelToStart = 1;
+    gameState.levelToStart = 1;
 
     gameArea.ctx.drawImage(
       game.images.levelOne,
@@ -44,7 +45,7 @@ class LevelOne {
     gameArea.ctx.fillText(p5, 50, 400, 600);
 
     gameArea.drawButton("Start Level");
-    game.gameState.shouldStartLevel = true;
+    gameState.shouldStartLevel = true;
   }
 
   start() {
@@ -62,14 +63,14 @@ class LevelOne {
   }
 
   countdownToStart() {
-    let count = 3 - Math.floor(game.frames / 100);
+    let count = 3 - Math.floor(gameState.frames / 100);
 
     if (count < -2) return;
 
     gameArea.ctx.font = `28px ${FONT_STYLE}`;
     gameArea.ctx.fillStyle = "red";
-    if (count === 0 && !game.didLevelStart) {
-      game.didLevelStart = true;
+    if (count === 0 && !gameState.didLevelStart) {
+      gameState.didLevelStart = true;
       gameArea.abortController = new AbortController();
       const signal = gameArea.abortController.signal;
 
@@ -96,7 +97,7 @@ class LevelOne {
         },
         { signal: signal }
       );
-    } else if (count == 0 && game.didLevelStart) {
+    } else if (count == 0 && gameState.didLevelStart) {
       gameArea.ctx.fillStyle = "green";
       gameArea.ctx.fillText("GO!", gameArea.width / 2, 240);
     } else if (count > 0) {
@@ -111,13 +112,13 @@ class LevelOne {
     const rowTwoStartingYPos = 180;
     const rowOneStartingYpos = 65;
 
-    if (game.frames % 300 === 0) {
+    if (gameState.frames % 300 === 0) {
       vehicles.bus.push(
         new Vehicle(startingXPos, rowOneStartingYpos, 150, 75, 1)
       );
     }
 
-    if (game.frames % 200 === 0) {
+    if (gameState.frames % 200 === 0) {
       vehicles.bus.push(
         new Vehicle(startingXPos, rowTwoStartingYPos, 150, 75, 2)
       );
@@ -157,8 +158,8 @@ class LevelOne {
     this.removeKeyDownEventListener();
 
     gameArea.clearGameArea();
-    game.gameState.levelToLoad = 0;
-    game.gameState.shouldStartLevel = false;
+    gameState.levelToLoad = 0;
+    gameState.shouldStartLevel = false;
 
     gameArea.ctx.drawImage(
       game.images.levelOneGameOver,
@@ -195,9 +196,9 @@ class LevelOne {
 
     vehicles.bus = [];
 
-    game.frames = 0;
+    gameState.frames = 0;
 
-    game.didLevelStart = false;
+    gameState.didLevelStart = false;
   }
 
   victoryCheck(playerYPos) {
@@ -211,8 +212,8 @@ class LevelOne {
     gameArea.clearGameArea();
     this.removeKeyDownEventListener();
 
-    game.gameState.levelToLoad = 2;
-    game.gameState.shouldStartLevel = false;
+    gameState.levelToLoad = 2;
+    gameState.shouldStartLevel = false;
 
     gameArea.ctx.drawImage(
       game.images.levelOneVictory,
@@ -260,7 +261,7 @@ const checkLevelOneCollision = (vehicleArray) => {
 };
 
 const drawLevelOne = () => {
-  game.updateFrames();
+  gameState.updateFrames();
   gameArea.clearGameArea();
   levelOne.drawBackground();
   player.levelOne.drawPlayer(game.images.playerLevelOne);
