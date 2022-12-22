@@ -1,4 +1,4 @@
-import { game } from "../app.js";
+import { gameAssets } from "../game/GameAssets.js";
 import { gameArea } from "../game/GameArea.js";
 import { gameState } from "../game/GameState.js";
 import { FONT_STYLE } from "../utils/fonts.js";
@@ -10,7 +10,7 @@ class StartScreen {
     gameState.shouldStartLevel = false;
 
     gameArea.ctx.drawImage(
-      game.images.startScreen,
+      gameAssets.images.startScreen,
       0,
       0,
       gameArea.width,

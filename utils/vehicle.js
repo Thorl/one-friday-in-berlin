@@ -1,5 +1,5 @@
 import { GameObject } from "./game-object.js";
-import { game } from "../app.js";
+import { gameAssets } from "../game/GameAssets.js";
 import { gameArea } from "../game/GameArea.js";
 
 export class Vehicle extends GameObject {
@@ -11,7 +11,7 @@ export class Vehicle extends GameObject {
   drawVehicle() {
     const ctx = gameArea.ctx;
     ctx.drawImage(
-      game.images.bus,
+      gameAssets.images.bus,
       this.xPos,
       this.yPos,
       this.width,

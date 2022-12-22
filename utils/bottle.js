@@ -1,5 +1,5 @@
 import { GameObject } from "./game-object.js";
-import { game } from "../app.js";
+import { gameAssets } from "../game/GameAssets.js";
 import { gameArea } from "../game/GameArea.js";
 
 export class Bottle extends GameObject {
@@ -10,7 +10,7 @@ export class Bottle extends GameObject {
   drawBottle() {
     const ctx = gameArea.ctx;
     ctx.drawImage(
-      game.images.beerBottle,
+      gameAssets.images.beerBottle,
       this.xPos,
       this.yPos,
       this.width,

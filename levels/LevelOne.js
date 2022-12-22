@@ -2,7 +2,7 @@ import { FONT_STYLE } from "../utils/fonts.js";
 import { Player } from "../utils/player.js";
 import { player } from "../utils/player.js";
 import { Vehicle } from "../utils/vehicle.js";
-import { game } from "../app.js";
+import { gameAssets } from "../game/GameAssets.js";
 import { gameArea } from "../game/GameArea.js";
 import { gameState } from "../game/GameState.js";
 
@@ -13,7 +13,7 @@ class LevelOne {
     gameState.levelToStart = 1;
 
     gameArea.ctx.drawImage(
-      game.images.levelOne,
+      gameAssets.images.levelOne,
       0,
       0,
       gameArea.width,
@@ -54,7 +54,7 @@ class LevelOne {
 
   drawBackground() {
     gameArea.ctx.drawImage(
-      game.images.levelOneInGame,
+      gameAssets.images.levelOneInGame,
       0,
       0,
       gameArea.width,
@@ -162,7 +162,7 @@ class LevelOne {
     gameState.shouldStartLevel = false;
 
     gameArea.ctx.drawImage(
-      game.images.levelOneGameOver,
+      gameAssets.images.levelOneGameOver,
       0,
       0,
       gameArea.width,
@@ -216,7 +216,7 @@ class LevelOne {
     gameState.shouldStartLevel = false;
 
     gameArea.ctx.drawImage(
-      game.images.levelOneVictory,
+      gameAssets.images.levelOneVictory,
       0,
       0,
       gameArea.width,
@@ -264,7 +264,7 @@ const drawLevelOne = () => {
   gameState.updateFrames();
   gameArea.clearGameArea();
   levelOne.drawBackground();
-  player.levelOne.drawPlayer(game.images.playerLevelOne);
+  player.levelOne.drawPlayer(gameAssets.images.playerLevelOne);
   levelOne.updateVehiclePos();
   levelOne.countdownToStart();
   checkLevelOneCollision(vehicles.bus);

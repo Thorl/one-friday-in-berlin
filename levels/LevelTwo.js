@@ -1,5 +1,5 @@
 import { FONT_STYLE } from "../utils/fonts.js";
-import { game } from "../app.js";
+import { gameAssets } from "../game/GameAssets.js";
 import { gameArea } from "../game/GameArea.js";
 import { gameState } from "../game/GameState.js";
 import { Player } from "../utils/player.js";
@@ -20,7 +20,7 @@ class LevelTwo {
     gameState.didLevelStart = false;
 
     gameArea.ctx.drawImage(
-      game.images.levelTwo,
+      gameAssets.images.levelTwo,
       0,
       0,
       gameArea.width,
@@ -61,7 +61,7 @@ class LevelTwo {
 
   drawBackground() {
     gameArea.ctx.drawImage(
-      game.images.levelTwoInGame,
+      gameAssets.images.levelTwoInGame,
       0,
       0,
       gameArea.width,
@@ -168,7 +168,7 @@ class LevelTwo {
     gameState.shouldStartLevel = false;
 
     gameArea.ctx.drawImage(
-      game.images.levelTwoGameOver,
+      gameAssets.images.levelTwoGameOver,
       0,
       0,
       gameArea.width,
@@ -243,7 +243,7 @@ const drawLevelTwo = () => {
   gameState.updateFrames();
   gameArea.clearGameArea();
   levelTwo.drawBackground();
-  player.levelTwo.drawPlayer(game.images.playerLevelTwo);
+  player.levelTwo.drawPlayer(gameAssets.images.playerLevelTwo);
   levelTwo.updateBottlePos();
   levelTwo.countdownToStart();
   checkLevelTwoCollision(bottles);
