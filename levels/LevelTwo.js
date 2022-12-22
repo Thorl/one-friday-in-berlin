@@ -1,5 +1,6 @@
 import { FONT_STYLE } from "../utils/fonts.js";
 import { game } from "../app.js";
+import { gameArea } from "../game/GameArea.js";
 import { Player } from "../utils/player.js";
 import { player } from "../utils/player.js";
 import { Bottle } from "../utils/bottle.js";
@@ -11,16 +12,22 @@ class LevelTwo {
   }
 
   load() {
-    game.clearGameArea();
+    gameArea.clearGameArea();
 
     game.gameState.levelToStart = 2;
     game.frames = 0;
     game.didLevelStart = false;
 
-    game.ctx.drawImage(game.images.levelTwo, 0, 0, game.width, game.height);
+    gameArea.ctx.drawImage(
+      game.images.levelTwo,
+      0,
+      0,
+      gameArea.width,
+      gameArea.height
+    );
 
-    game.ctx.fillStyle = "rgba(0,0,0,0.7)";
-    game.ctx.fillRect(0, 0, game.width, game.height);
+    gameArea.ctx.fillStyle = "rgba(0,0,0,0.7)";
+    gameArea.ctx.fillRect(0, 0, gameArea.width, gameArea.height);
 
     const header = "Inside the bar...";
     const p1 = "you're very thirsty and begin ordering beer.";
@@ -31,19 +38,19 @@ class LevelTwo {
       "Control your character by using the left and right keyboard buttons.";
     const p5 = "Begin playing by clicking the 'Start Level' button.";
 
-    game.ctx.font = `36px ${FONT_STYLE}`;
-    game.ctx.fillStyle = "#fff";
-    game.ctx.textAlign = "left";
-    game.ctx.fillText(header, 50, 100);
+    gameArea.ctx.font = `36px ${FONT_STYLE}`;
+    gameArea.ctx.fillStyle = "#fff";
+    gameArea.ctx.textAlign = "left";
+    gameArea.ctx.fillText(header, 50, 100);
 
-    game.ctx.font = `12px ${FONT_STYLE}`;
-    game.ctx.fillText(p1, 50, 200, 600);
-    game.ctx.fillText(p2, 50, 250, 600);
-    game.ctx.fillText(p3, 50, 300, 600);
-    game.ctx.fillText(p4, 50, 350, 600);
-    game.ctx.fillText(p5, 50, 400, 600);
+    gameArea.ctx.font = `12px ${FONT_STYLE}`;
+    gameArea.ctx.fillText(p1, 50, 200, 600);
+    gameArea.ctx.fillText(p2, 50, 250, 600);
+    gameArea.ctx.fillText(p3, 50, 300, 600);
+    gameArea.ctx.fillText(p4, 50, 350, 600);
+    gameArea.ctx.fillText(p5, 50, 400, 600);
 
-    game.drawButton("Start Level");
+    gameArea.drawButton("Start Level");
     game.gameState.shouldStartLevel = true;
   }
 
@@ -52,12 +59,12 @@ class LevelTwo {
   }
 
   drawBackground() {
-    game.ctx.drawImage(
+    gameArea.ctx.drawImage(
       game.images.levelTwoInGame,
       0,
       0,
-      game.width,
-      game.height
+      gameArea.width,
+      gameArea.height
     );
   }
 
@@ -66,16 +73,16 @@ class LevelTwo {
 
     if (count < -2) return;
 
-    game.ctx.font = `28px ${FONT_STYLE}`;
-    game.ctx.fillStyle = "red";
+    gameArea.ctx.font = `28px ${FONT_STYLE}`;
+    gameArea.ctx.fillStyle = "red";
 
     if (count === 0 && !game.didLevelStart) {
       game.didLevelStart = true;
       game.abortController = new AbortController();
       const signal = game.abortController.signal;
 
-      game.ctx.fillstyle = "green";
-      game.ctx.fillText("GO!", 320, 240);
+      gameArea.ctx.fillstyle = "green";
+      gameArea.ctx.fillText("GO!", 320, 240);
 
       document.addEventListener(
         "keydown",
@@ -92,11 +99,11 @@ class LevelTwo {
         { signal: signal }
       );
     } else if (count == 0 && game.didLevelStart) {
-      game.ctx.fillStyle = "green";
-      game.ctx.fillText("GO!", 320, 240);
+      gameArea.ctx.fillStyle = "green";
+      gameArea.ctx.fillText("GO!", 320, 240);
     } else if (count > 0) {
-      game.ctx.fillStyle = "red";
-      game.ctx.fillText(`${count}`, 320, 240);
+      gameArea.ctx.fillStyle = "red";
+      gameArea.ctx.fillText(`${count}`, 320, 240);
     }
   }
 
@@ -111,14 +118,14 @@ class LevelTwo {
       return;
     }
 
-    game.ctx.font = `20px ${FONT_STYLE}`;
+    gameArea.ctx.font = `20px ${FONT_STYLE}`;
 
     if (count > 3) {
-      game.ctx.fillStyle = "white";
+      gameArea.ctx.fillStyle = "white";
     } else {
-      game.ctx.fillStyle = "red";
+      gameArea.ctx.fillStyle = "red";
     }
-    game.ctx.fillText(`Timer: ${count}`, 90, 30);
+    gameArea.ctx.fillText(`Timer: ${count}`, 90, 30);
   }
 
   updateBottlePos() {
@@ -143,9 +150,9 @@ class LevelTwo {
   updateScore() {
     const score = this.levelTwoScore;
 
-    game.ctx.font = `20px ${FONT_STYLE}`;
-    game.ctx.fillStyle = "white";
-    game.ctx.fillText(`Score: ${score}`, 590, 30);
+    gameArea.ctx.font = `20px ${FONT_STYLE}`;
+    gameArea.ctx.fillStyle = "white";
+    gameArea.ctx.fillText(`Score: ${score}`, 590, 30);
   }
 
   stop() {
@@ -153,22 +160,22 @@ class LevelTwo {
   }
 
   loadGameOverScreen() {
-    game.clearGameArea();
+    gameArea.clearGameArea();
     this.removeKeyDownEventListener();
 
     game.gameState.levelToLoad = 0;
     game.gameState.shouldStartLevel = false;
 
-    game.ctx.drawImage(
+    gameArea.ctx.drawImage(
       game.images.levelTwoGameOver,
       0,
       0,
-      game.width,
-      game.height
+      gameArea.width,
+      gameArea.height
     );
 
-    game.ctx.fillStyle = "rgba(0,0,0,0.7)";
-    game.ctx.fillRect(0, 0, game.width, game.height);
+    gameArea.ctx.fillStyle = "rgba(0,0,0,0.7)";
+    gameArea.ctx.fillRect(0, 0, gameArea.width, gameArea.height);
 
     const header = "Well done!";
     const p1 = `You drank ${this.levelTwoScore} beers...`;
@@ -176,20 +183,20 @@ class LevelTwo {
     const p3 = "You pass out and your friends have to take you home.";
     const p4 = "But don't worry. Next weekend you can always...";
 
-    game.ctx.font = `36px ${FONT_STYLE}`;
-    game.ctx.fillStyle = "green";
-    game.ctx.textAlign = "left";
-    game.ctx.fillText(header, 50, 100);
+    gameArea.ctx.font = `36px ${FONT_STYLE}`;
+    gameArea.ctx.fillStyle = "green";
+    gameArea.ctx.textAlign = "left";
+    gameArea.ctx.fillText(header, 50, 100);
 
-    game.ctx.font = `13px ${FONT_STYLE}`;
-    game.ctx.fillStyle = "white";
-    game.ctx.fillText(p1, 50, 200, 600);
-    game.ctx.fillText(p2, 50, 250, 600);
-    game.ctx.fillText(p3, 50, 300, 600);
-    game.ctx.fillText(p4, 50, 350, 600);
+    gameArea.ctx.font = `13px ${FONT_STYLE}`;
+    gameArea.ctx.fillStyle = "white";
+    gameArea.ctx.fillText(p1, 50, 200, 600);
+    gameArea.ctx.fillText(p2, 50, 250, 600);
+    gameArea.ctx.fillText(p3, 50, 300, 600);
+    gameArea.ctx.fillText(p4, 50, 350, 600);
 
     this.resetGame();
-    game.drawButton("Try Again");
+    gameArea.drawButton("Try Again");
   }
 
   removeKeyDownEventListener() {
@@ -233,7 +240,7 @@ const checkLevelTwoCollision = (bottlesArray) => {
 
 const drawLevelTwo = () => {
   game.updateFrames();
-  game.clearGameArea();
+  gameArea.clearGameArea();
   levelTwo.drawBackground();
   player.levelTwo.drawPlayer(game.images.playerLevelTwo);
   levelTwo.updateBottlePos();

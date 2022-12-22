@@ -1,5 +1,4 @@
 import { GameObject } from "./game-object.js";
-import { game } from "../app.js";
 import { gameArea } from "../game/GameArea.js";
 
 export class Player extends GameObject {
