@@ -5,10 +5,11 @@ import { gameState } from "../game/GameState.js";
 import { Player } from "../utils/player.js";
 import { player } from "../utils/player.js";
 import { Bottle } from "../utils/bottle.js";
-import { vehicles } from "./LevelOne.js";
+import { levelOne } from "./LevelOne.js";
 
 class LevelTwo {
   constructor() {
+    this.bottles = [];
     this.levelTwoScore = 0;
   }
 
@@ -56,8 +57,36 @@ class LevelTwo {
   }
 
   start() {
-    this.interval = setInterval(drawLevelTwo, 10);
+    this.interval = setInterval(this.drawLevelTwo, 10);
   }
+
+  drawLevelTwo = () => {
+    gameState.updateFrames();
+    gameArea.clearGameArea();
+    this.drawBackground();
+    player.levelTwo.drawPlayer(gameAssets.images.playerLevelTwo);
+    this.updateBottlePos();
+    this.countdownToStart();
+    this.checkLevelTwoCollision(this.bottles);
+    this.updateScore();
+    this.countdownToGameOver();
+  };
+
+  checkLevelTwoCollision = (bottlesArray) => {
+    for (let i = 0; i < bottlesArray.length; i++) {
+      if (
+        !(
+          player.levelTwo.top() > bottlesArray[i].bottom() ||
+          player.levelTwo.bottom() < bottlesArray[i].top() ||
+          player.levelTwo.left() > bottlesArray[i].right() ||
+          player.levelTwo.right() < bottlesArray[i].left()
+        )
+      ) {
+        levelTwo.levelTwoScore += 1;
+        bottlesArray.splice(i, 1);
+      }
+    }
+  };
 
   drawBackground() {
     gameArea.ctx.drawImage(
@@ -139,12 +168,12 @@ class LevelTwo {
     const xPosition = Math.floor(Math.random() * (maxX - minX + 1) + minX);
 
     if (gameState.frames % 50 === 0) {
-      bottles.push(new Bottle(xPosition, yPosition, 20, 70));
+      this.bottles.push(new Bottle(xPosition, yPosition, 20, 70));
     }
 
-    for (let i = 0; i < bottles.length; i++) {
-      bottles[i].yPos += 4;
-      bottles[i].drawBottle();
+    for (let i = 0; i < this.bottles.length; i++) {
+      this.bottles[i].yPos += 4;
+      this.bottles[i].drawBottle();
     }
   }
 
@@ -207,11 +236,11 @@ class LevelTwo {
   resetGame() {
     player.levelOne = new Player(330, 485, 40, 60);
 
-    vehicles.bus = [];
+    levelOne.vehicles.bus = [];
 
     player.levelTwo = new Player(275, 340, 100, 200);
 
-    bottles = [];
+    this.bottles = [];
 
     this.levelTwoScore = 0;
 
@@ -220,35 +249,5 @@ class LevelTwo {
     gameState.didLevelStart = false;
   }
 }
-
-let bottles = [];
-
-const checkLevelTwoCollision = (bottlesArray) => {
-  for (let i = 0; i < bottlesArray.length; i++) {
-    if (
-      !(
-        player.levelTwo.top() > bottlesArray[i].bottom() ||
-        player.levelTwo.bottom() < bottlesArray[i].top() ||
-        player.levelTwo.left() > bottlesArray[i].right() ||
-        player.levelTwo.right() < bottlesArray[i].left()
-      )
-    ) {
-      levelTwo.levelTwoScore += 1;
-      bottlesArray.splice(i, 1);
-    }
-  }
-};
-
-const drawLevelTwo = () => {
-  gameState.updateFrames();
-  gameArea.clearGameArea();
-  levelTwo.drawBackground();
-  player.levelTwo.drawPlayer(gameAssets.images.playerLevelTwo);
-  levelTwo.updateBottlePos();
-  levelTwo.countdownToStart();
-  checkLevelTwoCollision(bottles);
-  levelTwo.updateScore();
-  levelTwo.countdownToGameOver();
-};
 
 export const levelTwo = new LevelTwo();

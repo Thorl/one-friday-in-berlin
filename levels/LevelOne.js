@@ -7,6 +7,10 @@ import { gameArea } from "../game/GameArea.js";
 import { gameState } from "../game/GameState.js";
 
 class LevelOne {
+  constructor() {
+    this.vehicles = { bus: [] };
+  }
+
   load() {
     gameArea.clearGameArea();
 
@@ -49,7 +53,7 @@ class LevelOne {
   }
 
   start() {
-    this.interval = setInterval(drawLevelOne, 10);
+    this.interval = setInterval(this.drawLevelOne, 10);
   }
 
   drawBackground() {
@@ -59,6 +63,38 @@ class LevelOne {
       0,
       gameArea.width,
       gameArea.height
+    );
+  }
+
+  drawLevelOne = () => {
+    gameState.updateFrames();
+    gameArea.clearGameArea();
+    this.drawBackground();
+    player.levelOne.drawPlayer(gameAssets.images.playerLevelOne);
+    this.updateVehiclePos();
+    this.countdownToStart();
+    this.checkLevelOneCollision(this.vehicles.bus);
+    this.victoryCheck(player.levelOne.yPos);
+  };
+
+  checkLevelOneCollision = (vehicleArray) => {
+    const collided = vehicleArray.some((vehicle) => {
+      return this.didPlayerCollide(vehicle);
+    });
+    if (collided) {
+      this.stop();
+      this.loadGameOverScreen();
+    }
+  };
+
+  didPlayerCollide(vehicle) {
+    return !(
+      player.levelOne.top() > vehicle.bottom() ||
+      player.levelOne.bottom() < vehicle.top() ||
+      player.levelOne.left() > vehicle.right() ||
+      (player.levelOne.left() < vehicle.left() &&
+        player.levelOne.right() < vehicle.left()) ||
+      player.levelOne.right() < vehicle.left()
     );
   }
 
@@ -113,40 +149,29 @@ class LevelOne {
     const rowOneStartingYpos = 65;
 
     if (gameState.frames % 300 === 0) {
-      vehicles.bus.push(
+      this.vehicles.bus.push(
         new Vehicle(startingXPos, rowOneStartingYpos, 150, 75, 1)
       );
     }
 
     if (gameState.frames % 200 === 0) {
-      vehicles.bus.push(
+      this.vehicles.bus.push(
         new Vehicle(startingXPos, rowTwoStartingYPos, 150, 75, 2)
       );
 
-      vehicles.bus.push(
+      this.vehicles.bus.push(
         new Vehicle(startingXPos, rowThreeStartingYPos, 150, 75, 3)
       );
 
-      vehicles.bus.push(
+      this.vehicles.bus.push(
         new Vehicle(startingXPos, rowFourStartingYPos, 150, 75, 6)
       );
     }
 
-    for (let i = 0; i < vehicles.bus.length; i++) {
-      vehicles.bus[i].xPos -= vehicles.bus[i].speed;
-      vehicles.bus[i].drawVehicle();
+    for (let i = 0; i < this.vehicles.bus.length; i++) {
+      this.vehicles.bus[i].xPos -= this.vehicles.bus[i].speed;
+      this.vehicles.bus[i].drawVehicle();
     }
-  }
-
-  collisionCheck(vehicle) {
-    return !(
-      player.levelOne.top() > vehicle.bottom() ||
-      player.levelOne.bottom() < vehicle.top() ||
-      player.levelOne.left() > vehicle.right() ||
-      (player.levelOne.left() < vehicle.left() &&
-        player.levelOne.right() < vehicle.left()) ||
-      player.levelOne.right() < vehicle.left()
-    );
   }
 
   stop() {
@@ -194,7 +219,7 @@ class LevelOne {
   reset() {
     player.levelOne = new Player(330, 485, 40, 60);
 
-    vehicles.bus = [];
+    this.vehicles.bus = [];
 
     gameState.frames = 0;
 
@@ -247,28 +272,5 @@ class LevelOne {
     gameArea.abortController.abort();
   }
 }
-
-export let vehicles = { bus: [] };
-
-const checkLevelOneCollision = (vehicleArray) => {
-  const collided = vehicleArray.some((vehicle) => {
-    return levelOne.collisionCheck(vehicle);
-  });
-  if (collided) {
-    levelOne.stop();
-    levelOne.loadGameOverScreen();
-  }
-};
-
-const drawLevelOne = () => {
-  gameState.updateFrames();
-  gameArea.clearGameArea();
-  levelOne.drawBackground();
-  player.levelOne.drawPlayer(gameAssets.images.playerLevelOne);
-  levelOne.updateVehiclePos();
-  levelOne.countdownToStart();
-  checkLevelOneCollision(vehicles.bus);
-  levelOne.victoryCheck(player.levelOne.yPos);
-};
 
 export const levelOne = new LevelOne();
