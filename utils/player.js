@@ -1,5 +1,6 @@
 import { GameObject } from "./game-object.js";
 import { game } from "../app.js";
+import { gameArea } from "../game/GameArea.js";
 
 export class Player extends GameObject {
   constructor(xPos, yPos, width, height) {
@@ -7,7 +8,7 @@ export class Player extends GameObject {
   }
 
   drawPlayer(playerImg) {
-    const ctx = game.ctx;
+    const ctx = gameArea.ctx;
 
     ctx.drawImage(playerImg, this.xPos, this.yPos, this.width, this.height);
   }
@@ -19,7 +20,7 @@ export class Player extends GameObject {
   }
 
   moveDown() {
-    if (this.yPos + this.height + 25 <= game.height) {
+    if (this.yPos + this.height + 25 <= gameArea.height) {
       this.yPos += 25;
     }
   }
@@ -31,7 +32,7 @@ export class Player extends GameObject {
   }
 
   moveRight() {
-    if (this.xPos + this.width + 25 <= game.width) {
+    if (this.xPos + this.width + 25 <= gameArea.width) {
       this.xPos += 25;
     }
   }
