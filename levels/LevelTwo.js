@@ -236,7 +236,7 @@ class LevelTwo {
   resetGame() {
     player.levelOne = new Player(330, 485, 40, 60);
 
-    levelOne.vehicles.bus = [];
+    levelOne.vehicles = [];
 
     player.levelTwo = new Player(275, 340, 100, 200);
 

@@ -8,7 +8,7 @@ import { gameState } from "../game/GameState.js";
 
 class LevelOne {
   constructor() {
-    this.vehicles = { bus: [] };
+    this.vehicles = [];
   }
 
   load() {
@@ -73,7 +73,7 @@ class LevelOne {
     player.levelOne.drawPlayer(gameAssets.images.playerLevelOne);
     this.updateVehiclePos();
     this.countdownToStart();
-    this.checkLevelOneCollision(this.vehicles.bus);
+    this.checkLevelOneCollision(this.vehicles);
     this.victoryCheck(player.levelOne.yPos);
   };
 
@@ -149,28 +149,28 @@ class LevelOne {
     const rowOneStartingYpos = 65;
 
     if (gameState.frames % 300 === 0) {
-      this.vehicles.bus.push(
+      this.vehicles.push(
         new Vehicle(startingXPos, rowOneStartingYpos, 150, 75, 1)
       );
     }
 
     if (gameState.frames % 200 === 0) {
-      this.vehicles.bus.push(
+      this.vehicles.push(
         new Vehicle(startingXPos, rowTwoStartingYPos, 150, 75, 2)
       );
 
-      this.vehicles.bus.push(
+      this.vehicles.push(
         new Vehicle(startingXPos, rowThreeStartingYPos, 150, 75, 3)
       );
 
-      this.vehicles.bus.push(
+      this.vehicles.push(
         new Vehicle(startingXPos, rowFourStartingYPos, 150, 75, 6)
       );
     }
 
-    for (let i = 0; i < this.vehicles.bus.length; i++) {
-      this.vehicles.bus[i].xPos -= this.vehicles.bus[i].speed;
-      this.vehicles.bus[i].drawVehicle();
+    for (let i = 0; i < this.vehicles.length; i++) {
+      this.vehicles[i].xPos -= this.vehicles[i].speed;
+      this.vehicles[i].drawVehicle();
     }
   }
 
@@ -219,7 +219,7 @@ class LevelOne {
   reset() {
     player.levelOne = new Player(330, 485, 40, 60);
 
-    this.vehicles.bus = [];
+    this.vehicles = [];
 
     gameState.frames = 0;
 
