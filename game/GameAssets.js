@@ -53,6 +53,15 @@ class GameAssets {
 
         retroFont.load().then((loadedFont) => {
           document.fonts.add(loadedFont);
+
+          const loadingAnimationElement =
+            document.getElementById("loading-animation");
+
+          loadingAnimationElement.setAttribute(
+            "class",
+            "hide-loading-animation"
+          );
+
           startScreen.load();
         });
 
