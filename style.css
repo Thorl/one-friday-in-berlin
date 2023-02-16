@@ -1,3 +1,8 @@
+@font-face {
+  font-family: "retroFont";
+  src: url("./fonts/PressStart2P-Regular.ttf") format("truetype");
+}
+
 html {
   margin: 0;
   padding: 0;
@@ -19,4 +24,27 @@ body {
 
 canvas {
   border: 5px solid black;
+  background-color: #000;
+}
+
+.hide-loading-animation {
+  display: none;
+}
+
+.loading-animation {
+  position: fixed;
+  margin-left: 40px;
+
+  color: #fff;
+  font-weight: bold;
+  font-family: monospace;
+  font-family: "retroFont", Courier, monospace;
+  font-size: 30px;
+  clip-path: inset(0 3ch 0 0);
+  animation: loader 1s steps(4) infinite;
+}
+@keyframes loader {
+  to {
+    clip-path: inset(0 -1ch 0 0);
+  }
 }
